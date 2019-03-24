@@ -19,10 +19,11 @@ class Path(models.Model):
 	location = models.CharField(max_length=32, primary_key=True)
 
 
+
 class Folder(models.Model):
-	name = models.ForeignKey(Category, on_delete=models.CASCADE)
-	node = models.ForeignKey(Path, on_delete=models.CASCADE, primary_key=True)
-	root = models.ForeignKey(Path, null=True, blank=True, on_delete=models.SET_NULL)
+	category = models.ForeignKey(Category, on_delete=models.CASCADE)
+	node = models.OneToOneField(Path, on_delete=models.CASCADE, primary_key=True,related_name='node')
+	root = models.ForeignKey(Path, on_delete=models.CASCADE, related_name='root')
 
 
 class Post(models.Model):
