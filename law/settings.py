@@ -32,6 +32,10 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+if env.bool('HAS_AUTH_USER_MODEL'):
+    AUTH_USER_MODEL = env.str('AUTH_USER_MODEL')
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -72,6 +76,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+
+            'libraries' : {
+                'template_tags' : 'generic.template_tags',
+            }
         },
     },
 ]

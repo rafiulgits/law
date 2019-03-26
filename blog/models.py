@@ -21,6 +21,7 @@ class Path(models.Model):
 
 
 class Folder(models.Model):
+	name = models.CharField(max_length=30)
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
 	node = models.OneToOneField(Path, on_delete=models.CASCADE, primary_key=True,related_name='node')
 	root = models.ForeignKey(Path, on_delete=models.CASCADE, related_name='root')
