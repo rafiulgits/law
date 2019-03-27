@@ -6,6 +6,13 @@ from django.contrib.auth import get_backends
 from django.db import models
 
 
+_GENDER = (
+	('F', 'Female'),
+	('M', 'Male'),
+	('O', 'Other'),
+	('*', 'Not to say')
+)
+
 class UserManager(BaseUserManager):
 
 	def create_user(self,phone,password=None,name=None,email=None,
@@ -64,6 +71,7 @@ class Account(AbstractBaseUser,PermissionsMixin):
 	phone = models.CharField(max_length=12, unique=True)
 	name = models.CharField(max_length=80)
 	email = models.EmailField(max_length=120,unique=True)
+	gender = models.CharField(max_length=1, choices=_GENDER, default='*')
 
 	objects = UserManager()
 
