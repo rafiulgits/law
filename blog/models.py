@@ -31,6 +31,7 @@ class Post(models.Model):
 	uid = models.CharField(max_length=32, primary_key=True)
 	title = models.TextField()
 	body = models.TextField()
+	folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
 
 
 class MCQ(models.Model):
