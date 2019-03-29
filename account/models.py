@@ -68,6 +68,7 @@ class Account(AbstractBaseUser,PermissionsMixin):
 	is_admin = models.BooleanField(default=False)
 	is_staff = models.BooleanField(default=False)
 	
+	id = models.BigAutoField(primary_key=True)
 	phone = models.CharField(max_length=12, unique=True)
 	name = models.CharField(max_length=80)
 	email = models.EmailField(max_length=120,unique=True)

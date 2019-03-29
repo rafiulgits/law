@@ -5,6 +5,22 @@ from django import forms
 from generic.variables import random
 
 
+class FolderForm(forms.ModelForm):
+	class Meta:
+		model = Folder
+		fields = ['name', 'category']
+
+		widgets = {
+			'name' : forms.TextInput(attrs={}),
+			'category' : forms.Select(attrs={})
+		}
+
+
+	def __init__(self, *args, **kwargs):
+		super(FolderForm, self).__init__(*args, **kwargs)
+
+
+
 class PostForm(forms.ModelForm):
 	class Meta:
 		model = Post
