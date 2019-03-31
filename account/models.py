@@ -16,7 +16,7 @@ _GENDER = (
 class UserManager(BaseUserManager):
 
 	def create_user(self,phone,password=None,name=None,email=None,
-		is_staff=False,is_admin=False):
+		is_staff=False,is_superuser=False):
 		if not password:
 			raise ValueError('password needed')
 		if not name:
@@ -27,7 +27,7 @@ class UserManager(BaseUserManager):
 		user = self.model(phone=phone)
 		user.name = name
 		user.email = email
-		user.is_admin = is_admin
+		user.is_superuser = is_superuser
 		user.is_staff = is_staff
 		user.set_password(password)
 		user.save(self._db)
@@ -65,10 +65,10 @@ class Account(AbstractBaseUser,PermissionsMixin):
 	
 	is_active = models.BooleanField(default=True)
 
-	is_admin = models.BooleanField(default=False)
+	is_superuser = models.BooleanField(default=False)
 	is_staff = models.BooleanField(default=False)
 	
-	id = models.BigAutoField(primary_key=True)
+
 	phone = models.CharField(max_length=12, unique=True)
 	name = models.CharField(max_length=80)
 	email = models.EmailField(max_length=120,unique=True)
@@ -81,7 +81,7 @@ class Account(AbstractBaseUser,PermissionsMixin):
 
 
 	def has_perm(self, perm, obj=None):
-		if self.is_admin:
+		if self.is_superuser:
 			return True
 		return _user_has_perm(self, perm, obj)
 
@@ -89,7 +89,7 @@ class Account(AbstractBaseUser,PermissionsMixin):
 		return all(self.has_perm(perm, obj) for perm in perm_list)
 
 	def has_module_perms(self, app_label):
-		if self.is_admin or self.is_staff:
+		if self.is_superuser or self.is_staff:
 			return True
 		return False
 

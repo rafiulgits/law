@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+	<title>All Subjects</title>
+{% endblock %}
+
+
+{% block extra_content %}
+	
+	<div class="d-flex justify-content-center align-items-center">
+		<div class="col-md-6">
+			<div class="list-group">
+				<h6 align="center">Available subjects</h6>
+				{%  for item in result %}
+					<a class="list-group-item list-group-item-action" href="#">
+						{{ item.name }}
+					</a>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+
+	
+{% endblock %}
+    
+
+{% block extra_script %}
+
+{% endblock %}

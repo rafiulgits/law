@@ -1,9 +1,12 @@
-from account.views import auth
+from account.views import auth, manage
 
 from django.urls import path
 from django.contrib.auth import views as resetviews
 
 urlpatterns = [
+
+	path('', manage.profile, name='profile'),
+	path('update/', manage.update, name='profile-update'),
 	
 	path('signup/', auth.signup, name='signup'),
 	path('signin/', auth.signin, name='signin'),

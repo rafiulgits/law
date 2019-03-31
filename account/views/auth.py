@@ -63,5 +63,5 @@ def signin(request):
 @login_required(login_url=LOGIN_URL)
 def signout(request):
 	logout(request)
-	return views.response(request,'account/auth/signout.html')
+	return redirect('/')
 	

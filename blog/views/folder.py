@@ -37,6 +37,8 @@ def create(request):
 			folder = Folder(name=name, category=category, url_path='/'+name+'/')
 			folder.save()
 
+			return HttpResponse('Done with no root')
+
 		else:
 			try:
 				root = Path.objects.get(uid=root_uid)
@@ -53,6 +55,3 @@ def create(request):
 	except ObjectDoesNotExist as e:
 		pass
 	return redirect(request.path_info)
-	
-
-# 	

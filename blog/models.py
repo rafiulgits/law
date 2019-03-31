@@ -38,7 +38,7 @@ class Folder(models.Model):
 	distance = models.SmallIntegerField(default=0)
 
 	def __str__(self):
-		return self.category +' - '+self.name
+		return self.category.name +' - '+self.name
 
 
 class Post(models.Model):

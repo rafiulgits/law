@@ -17,21 +17,36 @@
 
 		<nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top" 
 			style="height: 60px; width: 100%; position: relative;">
-			<a class="navbar-brand" href="#">Navbar</a>
+			<a class="navbar-brand" href="/">Logo</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="collapsibleNavbar">
 				<ul class="navbar-nav">
+					{% if request.user.is_authenticated %}
+						<li class="nav-item">
+							<a class="nav-link" href="/account/">{{ request.user.name }}</a>
+						</li>
+						<li class="nav-item">
+							<a href="/account/signout/" class="nav-link">Signout</a>
+						</li>
+						{% if request.user.is_superuser %}
+							<li class="nav-item">
+								<a class="nav-link" href="#">Create Folder</a>
+							</li>
+						{% endif %}
+					{% else %}
+						<li class="nav-item">
+							<a class="nav-link" href="/account/signin/">Signin</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/account/signup/">Signup</a>
+						</li>
+					{% endif %}
 					<li class="nav-item">
-						<a class="nav-link" href="/account/signin/">Signin</a>
+						<a class="nav-link" href="/subjects/">All available subjects</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="/account/signup/">Signup</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#">Link</a>
-					</li>    
+
 				</ul>
 			</div>  
 		</nav>
