@@ -27,19 +27,3 @@ class Profile(APIView):
 
 	def put(self, request, format=None):
 		pass
-
-
-
-@login_required(login_url=LOGIN_URL)
-def profile(request):
-	context = {}
-	return render(request, 'account/manage/profile.html', context)
-
-
-@login_required(login_url=LOGIN_URL)
-def update(request):
-	context = {}
-	form = ProfileUpdateForm(user=request.user)
-	context['form'] = form
-	return render(request, 'account/manage/update.html', context)
-
