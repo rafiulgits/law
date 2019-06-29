@@ -8,9 +8,12 @@ urlpatterns = [
 	path('', manage.profile, name='profile'),
 	path('update/', manage.update, name='profile-update'),
 	
-	path('signup/', auth.signup, name='signup'),
-	path('signin/', auth.signin, name='signin'),
-	path('signout/', auth.signout, name='signout'),
+	path('signup/', auth.SignUp.as_view(), name='signup'),
+	path('signin/', auth.SignIn.as_view(), name='signin'),
+	path('signout/', auth.SignOut.as_view(), name='signout'),
+
+
+	path('profile/', manage.Profile.as_view(), name='user-profile'),
 
 
 	path('password-reset/', resetviews.PasswordResetView.as_view(

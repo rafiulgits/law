@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate
 from django import forms
 
 from account.models import Account
@@ -48,7 +49,6 @@ class SignupForm(forms.ModelForm):
 
 		if query.exists():
 			raise forms.ValidationError('this email already taken')
-
 		return email
 
 
@@ -79,6 +79,17 @@ class SigninForm(forms.Form):
 	password = forms.CharField(widget=forms.PasswordInput(attrs=
 		{'placeholder' : 'Password', 
 		'class' : 'form-control'}))
+
+	def clean(self):
+		phone = self.cleaned_data['phone']
+		password = self.cleaned_data['password']
+
+		user = authenticate(phone=phone, password=password)
+		if user:
+			self.user = user
+			return self.cleaned_data
+		raise forms.ValidationError('invalid information')
+
 
 
 class PasswordChangeForm(forms.Form):

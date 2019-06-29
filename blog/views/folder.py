@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect,HttpResponse
 
-from generic.variables import LOGIN_URL
+from generic.const import LOGIN_URL
 
 
 @login_required(login_url=LOGIN_URL)

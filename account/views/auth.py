@@ -1,67 +1,51 @@
 from account.forms import SignupForm, SigninForm
+from account.serializers import ProfileSerializer
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout
+from django.shortcuts import redirect
 
-from generic.variables import LOGIN_URL
+from rest_framework.exceptions import NotFound,NotAcceptable
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer,TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
-# Create your views here.
+
+class SignIn(APIView):
+	renderer_classes = (JSONRenderer,)
+
+	def post(self, request, format=None):
+		form = SigninForm(request.POST)
+		if form.is_valid():
+			user = form.user
+			login(request, user)
+			serializer = ProfileSerializer(user)
+			return Response(serializer.data)
+		else:
+			raise NotFound(form.errors)
 
 
-def signup(request):
-	if request.user.is_authenticated:
-		return redirect('/')
 
-	context = {}
-	if request.method == 'POST':
+class SignUp(APIView):
+	renderer_classes = (JSONRenderer, )
+
+	def post(self, request, format=None):
 		form = SignupForm(request.POST)
 		if form.is_valid():
 			user = form.save()
 			login(request, user)
-
-			return redirect('/account/')
-
-	else:
-		form = SignupForm()
-
-	context['form'] = form
-
-	return render(request, 'account/auth/signup.html', context)
+			serializer = ProfileSerializer(user)
+			return Response(serializer.data)
+		else:
+			raise NotAcceptable(form.errors)
 
 
-def signin(request):
-	if request.user.is_authenticated:
+
+class SignOut(APIView):
+	renderer_classes = (JSONRenderer,)
+	permission_classes = (IsAuthenticated,)
+
+	def get(self, request, format=None):
+		logout(request)
 		return redirect('/')
-		
-	context = {}
-	if request.method == 'POST':
-		form = SigninForm(request.POST)
-		if form.is_valid():
-			phone = form.cleaned_data['phone']
-			password = form.cleaned_data['password']
-
-			user = authenticate(phone=phone, password=password)
-
-			if user is not None:
-				if(not user.is_active):
-					user.is_active = True
-					user.save()
-			
-				login(request, user)
-				return redirect('/account/')
-
-	else:
-		form = SigninForm()
-
-	context['form'] = form
-
-	return render(request, 'account/auth/signin.html', context)
-
-
-@login_required(login_url=LOGIN_URL)
-def signout(request):
-	logout(request)
-	return redirect('/')
-	
