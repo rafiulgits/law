@@ -24,15 +24,15 @@ class Category(models.Model):
 
 class Path(models.Model):
 	uid = models.AutoField(primary_key=True)
-	def __str__(self):
-		return self.uid
 
+	def __str__(self):
+		return str(self.uid)
 
 
 class Folder(models.Model):
 	name = models.CharField(max_length=30)
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
-	node = models.OneToOneField(Path, on_delete=models.CASCADE, primary_key=True,related_name='node')
+	node = models.OneToOneField(Path,on_delete=models.CASCADE, primary_key=True,related_name='node')
 	root = models.ForeignKey(Path, on_delete=models.CASCADE, related_name='root', null=True, blank=True)
 	distance = models.SmallIntegerField(default=0)
 

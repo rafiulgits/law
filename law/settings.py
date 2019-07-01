@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'account', 'blog',
 
     # third-party applications
-    'rest_framework',
+    'rest_framework', # REST framework
+    'graphene_django', # GraphQL
 ]
 
 MIDDLEWARE = [
@@ -67,7 +68,7 @@ ROOT_URLCONF = 'law.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'), ],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,7 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Dhaka'
 
 USE_I18N = True
 
@@ -153,6 +154,9 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+GRAPHENE = {
+    'SCHEMA': 'law.graph.schema'
+}
 
 # Email configuration
 EMAIL_BACKEND = env.str('EMAIL_BACKEND')
