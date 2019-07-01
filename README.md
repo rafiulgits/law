@@ -28,19 +28,19 @@
 
 * #####  Blog Models
 
-![](doc\models_er_update.svg)
+![](doc/models_er_update.svg)
 
 
 
 * ##### Folder
 
-  ![](doc\folder_update.svg)
+  ![](doc/folder_update.svg)
 
 
 
 * ##### Category Hierarchy 
 
-  ![](doc\category_hierarchy.svg)
+  ![](doc/category_hierarchy.svg)
 
 ***
 
