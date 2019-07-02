@@ -1,6 +1,6 @@
 from blog.models import Folder, MCQ, CQ, Post, Category, Path
 
-from graphene import List, relay, ObjectType
+from graphene import List, relay, ObjectType, Mutation
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
@@ -73,3 +73,44 @@ class Query(ObjectType):
 
 	def resolve_all_paths(self, info, **kwargs):
 		return Path.objects.all()
+
+
+
+import graphene
+
+class CreatePost(Mutation):
+	class Arguments():
+		title = graphene.String(required=True)
+		body = graphene.String(required=True)
+		folder = graphene.Int(required=True)
+
+	post = graphene.Field(PostType)
+
+	def mutate(self, info, title, body, folder):
+		new_post = Post(title=title,body=body,folder_id=folder)
+		new_post.save()
+		return CreatePost(post=new_post)
+
+
+
+class UpdatePost(Mutation):
+	class Arguments():
+		title = graphene.String(required=False)
+		body = graphene.String(required=False)
+		uid = graphene.Int(required=True)
+
+	post = graphene.Field(PostType)
+
+	def mutate(self, info, uid, title=None, body=None):
+		post_obj = Post.objects.get(uid=uid)
+		if title is not None:
+			post_obj.title = title
+		if body is not None:
+			post_obj.body = body
+		post_obj.save()
+		return UpdatePost(post=post_obj)
+
+
+class Mutation:
+	create_post = CreatePost.Field()
+	update_post = UpdatePost.Field()
