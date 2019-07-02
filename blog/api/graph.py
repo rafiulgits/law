@@ -1,22 +1,38 @@
 from blog.models import Folder, MCQ, CQ, Post, Category, Path
 
-import graphene
+from graphene import List, relay, ObjectType
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 
-class CategoryType(DjangoObjectType):
+class CategoryNode(DjangoObjectType):
 	class Meta:
 		model = Category
+		filter_fields = {
+			'uid' : ['exact'],
+			'name' : ['exact', 'icontains']
+		}
+		interfaces = (relay.Node,)
+
 
 class PathType(DjangoObjectType):
 	class Meta:
 		model = Path
 
-class FolderType(DjangoObjectType):
+
+class FolderNode(DjangoObjectType):
 	class Meta:
 		model = Folder
-
+		filter_fields = {
+			'name' : ['exact', 'icontains', 'istartswith'],
+			'distance' : ['exact'],
+			'category' : ['exact'],
+			'category__name' : ['exact', 'icontains'],
+			'category__uid' : ['exact'],
+			'root' : ['exact'],
+			'node' : ['exact']
+		}
+		interfaces = (relay.Node, )
 
 class MCQType(DjangoObjectType):
 	class Meta:
@@ -34,11 +50,17 @@ class PostType(DjangoObjectType):
 
 
 
-class Query(object):
-	all_posts = graphene.List(PostType)
-	all_folders = graphene.List(FolderType)
-	all_categories = graphene.List(CategoryType)
-	all_paths = graphene.List(PathType)
+class Query(ObjectType):
+	all_posts = List(PostType)
+
+	folder = relay.Node.Field(FolderNode)
+	all_folders = DjangoFilterConnectionField(FolderNode)
+
+	category = relay.Node.Field(CategoryNode)
+	all_categories = DjangoFilterConnectionField(CategoryNode)
+
+	all_paths = List(PostType)
+
 
 	def resolve_all_posts(self, info, **kwargs):
 		return Post.objects.all()
