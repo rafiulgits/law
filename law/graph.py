@@ -1,12 +1,13 @@
-import graphene
-from blog.api.graph import Query as BlogQuery
-from blog.api.graph import Mutation as BlogMutation
+from blog.api.schema import Query as BlogQuery
+from blog.api.schema import Mutation as BlogMutation
 
-class Query(BlogQuery, graphene.ObjectType):
+from graphene import ObjectType, Schema
+
+class Query(BlogQuery, ObjectType):
 	pass
 
-class Mutation(BlogMutation, graphene.ObjectType):
+class Mutation(BlogMutation, ObjectType):
 	pass
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation)
+schema = Schema(query=Query, mutation=Mutation)
