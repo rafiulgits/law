@@ -17,6 +17,8 @@ class CategoryType(DjangoObjectType):
 class PathType(DjangoObjectType):
 	class Meta:
 		model = models.Path
+		filter_fields = ['uid']
+		interfaces = (relay.Node,)
 
 
 class FolderType(DjangoObjectType):
@@ -27,8 +29,8 @@ class FolderType(DjangoObjectType):
 			'distance' : ['exact'],
 			'category' : ['exact'],
 			'category__name' : ['exact', 'icontains'],
-			'node' : ['exact'],
-			'root': ['exact']
+			'self_loc' : ['exact'],
+			'root_loc': ['exact']
 		}
 		interfaces = (relay.Node, )
 
@@ -53,7 +55,7 @@ class MCQTagType(DjangoObjectType):
 	class Meta:
 		model = models.MCQTag
 		filter_fields = {
-			'tag' : ['exact'],
+			'folder' : ['exact'],
 		}
 		interfaces = (relay.Node,)
 
@@ -63,6 +65,6 @@ class CQTagType(DjangoObjectType):
 	class Meta:
 		model = models.CQTag
 		filter_fields = {
-			'tag' : ['exact']
+			'folder' : ['exact']
 		}
 		interfaces = (relay.Node,)

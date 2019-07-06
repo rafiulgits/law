@@ -1,5 +1,5 @@
-from blog.api.types import *
-from blog.api.mutations import *
+from blog.api import types
+from blog.api import mutations
 from blog.models import *
 
 from graphene_django.filter import DjangoFilterConnectionField
@@ -7,21 +7,21 @@ import graphene
 
 
 class Query(graphene.ObjectType):
-	all_posts = graphene.List(PostType)
+	all_posts = graphene.List(types.PostType)
 
-	folder = graphene.Field(FolderType, node_uid=graphene.Int())
-	all_folders = DjangoFilterConnectionField(FolderType)
+	folder = graphene.Field(types.FolderType, self_loc=graphene.Int())
+	all_folders = DjangoFilterConnectionField(types.FolderType)
 
-	category = graphene.relay.Node.Field(CategoryType)
-	all_categories = DjangoFilterConnectionField(CategoryType)
+	category = graphene.relay.Node.Field(types.CategoryType)
+	all_categories = DjangoFilterConnectionField(types.CategoryType)
 
-	path = graphene.Field(PathType, uid=graphene.Int())
-	all_paths = graphene.List(PathType)
+	path = graphene.relay.Node.Field(types.PathType)
+	all_paths = DjangoFilterConnectionField(types.PathType)
 
-	all_mcqs = graphene.List(MCQType)
+	all_mcqs = graphene.List(types.MCQType)
 
-	mcq_tag = graphene.relay.Node.Field(MCQTagType)
-	all_mcq_tags = DjangoFilterConnectionField(MCQTagType)
+	mcq_tag = graphene.relay.Node.Field(types.MCQTagType)
+	all_mcq_tags = DjangoFilterConnectionField(types.MCQTagType)
 
 
 	def resolve_all_posts(self, info, **kwargs):
@@ -39,19 +39,17 @@ class Query(graphene.ObjectType):
 	def resolve_all_mcqs(self, info, **kwargs):
 		return MCQ.objects.all()
 
-	def resolve_path(self, info, **kwargs):
-		uid = kwargs.get('uid', None)
-		return Path.objects.get(uid=uid)
-
 	def resolve_folder(self, info, **kwargs):
-		node_uid = kwargs.get('node_uid')
-		folder = Folder.objects.get(node_id=node_uid)
+		self_loc = kwargs.get('self_loc')
+		folder = Folder.objects.get(self_loc=self_loc)
 		return folder
 
 
 
 class Mutation:
-	create_post = CreatePost.Field()
-	update_post = UpdatePost.Field()
-	# create_mcq = CreateMCQ.Field()
-	# update_mcq = UpdateMCQ.Field()
+	create_folder = mutations.CreateFolder.Field()
+	update_folder = mutations.UpdateFolder.Field()
+	create_post = mutations.CreatePost.Field()
+	update_post = mutations.UpdatePost.Field()
+	create_mcq = mutations.CreateMCQ.Field()
+	update_mcq = mutations.UpdateMCQ.Field()

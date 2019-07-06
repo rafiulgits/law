@@ -32,12 +32,12 @@ class Path(models.Model):
 class Folder(models.Model):
 	name = models.CharField(max_length=30)
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
-	node = models.OneToOneField(Path,on_delete=models.CASCADE, primary_key=True,related_name='node')
-	root = models.ForeignKey(Path, on_delete=models.CASCADE, related_name='root', null=True, blank=True)
+	self_loc = models.OneToOneField(Path,on_delete=models.CASCADE, primary_key=True,related_name='self_loc')
+	root_loc = models.ForeignKey(Path, on_delete=models.CASCADE, related_name='root_loc', null=True, blank=True)
 	distance = models.SmallIntegerField(default=0)
 
 	class Meta:
-		unique_together = ('node', 'root')
+		unique_together = ('self_loc', 'root_loc')
 
 	def __str__(self):
 		return self.category.name +' - '+self.name
@@ -78,17 +78,17 @@ class CQ(models.Model):
 class MCQTag(models.Model):
 	uid = models.BigAutoField(primary_key=True)
 	mcq = models.ForeignKey(MCQ, on_delete=models.CASCADE)
-	tag = models.ForeignKey(Folder, on_delete=models.CASCADE)
+	folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
 
 	class Meta:
-		unique_together = ('uid', 'mcq')
+		unique_together = ('uid', 'folder')
 
 
 
 class CQTag(models.Model):
 	uid = models.AutoField(primary_key=True)
 	cq = models.ForeignKey(CQ, on_delete=models.CASCADE)
-	tag = models.ForeignKey(Folder, on_delete=models.CASCADE)
+	folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
 
 	class Meta:
-		unique_together = ('cq', 'tag')
+		unique_together = ('cq', 'folder')
