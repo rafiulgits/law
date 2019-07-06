@@ -23,6 +23,8 @@ class Query(graphene.ObjectType):
 	mcq_tag = graphene.relay.Node.Field(types.MCQTagType)
 	all_mcq_tags = DjangoFilterConnectionField(types.MCQTagType)
 
+	all_cqs = graphene.List(types.CQType)
+
 
 	def resolve_all_posts(self, info, **kwargs):
 		return Post.objects.all()
@@ -44,12 +46,29 @@ class Query(graphene.ObjectType):
 		folder = Folder.objects.get(self_loc=self_loc)
 		return folder
 
+	def resoleve_all_cqs(self, info, **kwargs):
+		return CQ.objects.all()
+
 
 
 class Mutation:
+	create_category = mutations.CreateCategory.Field()
+	# update_category = mutations.UpdateCategory.Field()
+
 	create_folder = mutations.CreateFolder.Field()
 	update_folder = mutations.UpdateFolder.Field()
+	
 	create_post = mutations.CreatePost.Field()
 	update_post = mutations.UpdatePost.Field()
+	
 	create_mcq = mutations.CreateMCQ.Field()
 	update_mcq = mutations.UpdateMCQ.Field()
+
+	create_cq = mutations.CreateCQ.Field()
+	update_cq = mutations.UpdateCQ.Field()
+
+	create_mcq_tag = mutations.CreateMCQTag.Field()
+	update_mcq_tag = mutations.UpdateMCQTag.Field()
+
+	create_cq_tag = mutations.CreateCQTag.Field()
+	update_cq_tag = mutations.UpdateCQTag.Field()
