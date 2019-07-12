@@ -36,6 +36,8 @@ if env.bool('HAS_AUTH_USER_MODEL'):
     AUTH_USER_MODEL = env.str('AUTH_USER_MODEL')
 
 
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,9 +53,13 @@ INSTALLED_APPS = [
     # third-party applications
     'rest_framework', # REST framework
     'graphene_django', # GraphQL
+    'corsheaders', # CORS Header : call api from same host
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'law.urls'
@@ -148,6 +155,22 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'data')
 
 
 
+# CORS_ORIGIN_WHITELIST = ('localhost:3000')
+
+# Call api from same host
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
