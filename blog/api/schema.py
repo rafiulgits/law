@@ -7,6 +7,7 @@ import graphene
 
 
 class Query(graphene.ObjectType):
+	post = graphene.Field(types.PostType, uid=graphene.ID())
 	all_posts = graphene.List(types.PostType)
 
 	folder = graphene.Field(types.FolderType, self_loc=graphene.Int())
@@ -25,6 +26,10 @@ class Query(graphene.ObjectType):
 
 	all_cqs = graphene.List(types.CQType)
 
+	def resolve_post(self, info, **kwargs):
+		uid = kwargs.get('uid')
+		post = Post.objects.get(uid=uid)
+		return post
 
 	def resolve_all_posts(self, info, **kwargs):
 		return Post.objects.all()
