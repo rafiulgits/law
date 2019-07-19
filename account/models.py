@@ -94,4 +94,4 @@ class Account(AbstractBaseUser,PermissionsMixin):
 		return False
 
 	def get_username(self):
-		return self.name+' - '+self.phone
+		return self.phone

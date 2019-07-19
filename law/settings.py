@@ -31,11 +31,9 @@ DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
-
+# Custom authentication model
 if env.bool('HAS_AUTH_USER_MODEL'):
     AUTH_USER_MODEL = env.str('AUTH_USER_MODEL')
-
-
 
 
 # Application definition
@@ -48,12 +46,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'account', 'blog',
-
     # third-party applications
     'rest_framework', # REST framework
+    'rest_framework.authtoken', # REST authentication
     'graphene_django', # GraphQL
     'corsheaders', # CORS Header : call api from same host
+
+    'account', 'blog',
 ]
 
 MIDDLEWARE = [
@@ -172,10 +171,14 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
+
+# REST TOKEN based authentication
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
 }
+
 
 GRAPHENE = {
     'SCHEMA': 'law.graph.schema'

@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer,TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework.authtoken.models import Token
 
 
 class SignIn(APIView):
@@ -21,10 +21,14 @@ class SignIn(APIView):
 			user = form.user
 			login(request, user)
 			serializer = ProfileSerializer(user)
-			return Response(serializer.data)
+			return Response({
+				'user' : serializer.data,
+				'token' : Token.objects.get(user=user).key
+			})
 		else:
-			raise NotFound(form.errors)
-
+			raise NotFound({
+				'errors' : form.errors
+			})
 
 
 class SignUp(APIView):
@@ -36,9 +40,14 @@ class SignUp(APIView):
 			user = form.save()
 			login(request, user)
 			serializer = ProfileSerializer(user)
-			return Response(serializer.data)
+			return Response({
+				'user' : serializer.data,
+				'token' : Token.objects.create(user=user).key
+			})
 		else:
-			raise NotAcceptable(form.errors)
+			raise NotAcceptable({
+				'errors' : form.errors
+			})
 
 
 
