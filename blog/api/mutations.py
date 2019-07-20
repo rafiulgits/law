@@ -145,7 +145,6 @@ class CreateMCQ(graphene.Mutation):
 		option4 = graphene.String(required=True)
 		answer = graphene.Int(required=True)
 		summary = graphene.String(required=True)
-		folder = graphene.Int(required=True)
 
 	mcq = graphene.Field(types.MCQType)
 
