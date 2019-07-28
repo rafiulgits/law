@@ -63,6 +63,7 @@ class MCQ(models.Model):
 	option4 = models.CharField(max_length=250)
 	answer = models.SmallIntegerField(default=1,validators=[MaxValueValidator(4), MinValueValidator(1)])
 	summary = models.CharField(max_length=250)
+	level = models.SmallIntegerField(default=1,validators=[MaxValueValidator(3), MinValueValidator(1)])
 
 	def __str__(self):
 		return self.question

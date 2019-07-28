@@ -48,11 +48,10 @@ INSTALLED_APPS = [
 
     # third-party applications
     'rest_framework', # REST framework
-    'rest_framework.authtoken', # REST authentication
     'graphene_django', # GraphQL
     'corsheaders', # CORS Header : call api from same host
 
-    'account', 'blog',
+    'account', 'blog', 'exam'
 ]
 
 MIDDLEWARE = [
@@ -175,13 +174,40 @@ CORS_ALLOW_HEADERS = [
 # REST TOKEN based authentication
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
+# JSON Web token authentication config
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+
+    'AUTH_HEADER_TYPES': ('Access',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
+
 
 GRAPHENE = {
-    'SCHEMA': 'law.graph.schema'
+    'SCHEMA': 'law.graphql.schema'
 }
 
 # Email configuration

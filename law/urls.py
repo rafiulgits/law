@@ -19,10 +19,11 @@ from django.conf.urls import url
 from django.views.decorators.csrf import csrf_exempt
 
 from graphene_django.views import GraphQLView
-from law.graph import schema
+from law.graphql import schema
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/rest/account/', include('account.urls')),
+    path('api/account/', include('account.urls')),
+    path('api/', include('blog.urls')),
     path('api/graph', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 ]

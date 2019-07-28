@@ -1,7 +1,7 @@
 from blog.api.schema import Query as BlogQuery
 from blog.api.schema import Mutation as BlogMutation
 
-from graphene import ObjectType, Schema
+from graphene import ObjectType, Schema as _SCHEMA
 
 class Query(BlogQuery, ObjectType):
 	pass
@@ -10,4 +10,8 @@ class Mutation(BlogMutation, ObjectType):
 	pass
 
 
-schema = Schema(query=Query, mutation=Mutation)
+schema = _SCHEMA(query=Query, mutation=Mutation)
+
+from json import dumps, loads
+def execute(query):
+	return dumps(schema.execute(query).data)
