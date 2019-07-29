@@ -1,5 +1,5 @@
-from blog.api.schema import Query as BlogQuery
-from blog.api.schema import Mutation as BlogMutation
+from blog.graph.schema import Query as BlogQuery
+from blog.graph.schema import Mutation as BlogMutation
 
 from graphene import ObjectType, Schema as _SCHEMA
 

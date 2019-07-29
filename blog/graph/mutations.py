@@ -1,4 +1,4 @@
-from blog.api import types
+from blog.graph import types
 from blog.models import *
 from django.core.exceptions import ObjectDoesNotExist
 import graphene
@@ -39,15 +39,15 @@ class CreateFolder(graphene.Mutation):
 	class Arguments():
 		name = graphene.String(required=True)
 		distance = graphene.Int(required=True)
-		category_uid = graphene.Int(required=True)
+		category_name = graphene.String(required=True)
 		root_loc_uid = graphene.Int(required=False)
 
 	folder = graphene.Field(types.FolderType)
 
-	def mutate(self,info,name,category_uid,distance,root_loc_uid=None):
+	def mutate(self,info,name,category_name,distance,root_loc_uid=None):
 		try:
 			new_folder = Folder()
-			category = Category.objects.get(uid=category_uid)
+			category = Category.objects.get(name__iexact=category_name)
 			if root_loc_uid:
 				root_loc = Path.objects.get(uid=root_loc_uid)
 				new_folder.root_loc = root_loc
@@ -145,10 +145,11 @@ class CreateMCQ(graphene.Mutation):
 		option4 = graphene.String(required=True)
 		answer = graphene.Int(required=True)
 		summary = graphene.String(required=True)
+		level = graphene.Int(required=True)
 
 	mcq = graphene.Field(types.MCQType)
 
-	def mutate(self,info,question,option1,option2,option3,option4,answer,summary):
+	def mutate(self,info,question,option1,option2,option3,option4,answer,summary,level):
 		new_mcq = MCQ()
 		new_mcq.question=question
 		new_mcq.option1=option1
@@ -157,6 +158,7 @@ class CreateMCQ(graphene.Mutation):
 		new_mcq.option4=option4
 		new_mcq.answer=answer
 		new_mcq.summary=summary
+		new_mcq.level=level
 		new_mcq.save()
 		return CreateMCQ(mcq=new_mcq)
 

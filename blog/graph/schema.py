@@ -1,5 +1,5 @@
-from blog.api import types
-from blog.api import mutations
+from blog.graph import types
+from blog.graph import mutations
 from blog.models import *
 
 from graphene_django.filter import DjangoFilterConnectionField

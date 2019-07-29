@@ -24,6 +24,6 @@ from law.graphql import schema
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/account/', include('account.urls')),
-    path('api/', include('blog.urls')),
+    path('api/blog/', include('blog.urls')),
     path('api/graph', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 ]
