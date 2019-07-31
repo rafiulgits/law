@@ -23,7 +23,7 @@ class SignIn(APIView):
 			token = RefreshToken.for_user(user)
 			data = {
 				'refresh' : str(token),
-				'access ' : str(token.access_token)
+				'access' : str(token.access_token)
 			}
 			return Response(data)
 		else:
@@ -42,8 +42,9 @@ class SignUp(APIView):
 			token = RefreshToken.for_user(user)
 			data = {
 				'refresh' : str(token),
-				'access ' : str(token.access_token)
+				'access' : str(token.access_token)
 			}
+			return Response(data)
 		else:
 			raise NotAcceptable({
 				'errors' : form.errors

@@ -190,7 +190,7 @@ SIMPLE_JWT = {
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
 
-    'AUTH_HEADER_TYPES': ('Access',),
+    'AUTH_HEADER_TYPES': ('Token',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
 
