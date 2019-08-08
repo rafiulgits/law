@@ -62,14 +62,12 @@ class Query():
 
 
 
-
-
 class Mutation():
 
-	def create_folder(name, category_name, distance, rootLoc_uid):
+	def create_folder(data):
 		rootLoc = None
-		if rootLoc_uid:
-			rootLoc = ",rootLocUid:{}".format(rootLoc_uid)
+		if data.get('root_loc', None):
+			rootLoc = ",rootLocUid:{}".format(data['root_loc'])
 		else:
 			rootLoc = ""
 
@@ -93,11 +91,11 @@ class Mutation():
 			    }}
 			  }}
 			}}
-		""".format(name, category_name, distance, rootLoc)
+		""".format(data['name'], data['category'], data['distance'], rootLoc)
 		return execute(query)
 
 
-	def create_post(title, body, folder_loc):
+	def create_post(data):
 		query = """
 			mutation {{
 			  createPost(title:"{}", body: "{}", folderLoc: {} ) {{
@@ -109,11 +107,11 @@ class Mutation():
 			    }}
 			  }}
 			}}
-		""".format(title, body, folder_loc)
+		""".format(data['title'], data['body'], data['folder'].self_loc)
 		return execute(query)
 
 
-	def create_mcq(ques,op1,op2,op3,op4,ans,summary,level):
+	def create_mcq(data):
 		query = """
 		mutation {{
 		  createMcq(
@@ -132,5 +130,6 @@ class Mutation():
 		  }}
 		}}
 
-		""".format(ques,op1,op2,op3,op4,ans,summary,level)
+		""".format(data['question'], data['option1'], data['option2'], data['option3'],
+			data['option4'], data['answer'],data['summary'], data['level'])
 		return execute(query)
