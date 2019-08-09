@@ -1,0 +1,177 @@
+"""
+mutation {
+  createMcqExam(name:"MY Exam", level:2, totalMcq:10, marks:20, createdBy:1,public:true){
+    mcqExam{
+      id
+      uid
+      name
+      level
+      totalMcq
+      marks
+      dateTime
+      createdBy{
+        id
+        name
+        phone
+        email
+        gender
+      }
+      mcqexamitemSet{
+        edges{
+          node{
+            mcq{
+              question
+              option1
+              option2
+              option3
+              option4
+              answer
+              summary
+            }
+          }
+        }
+      }
+    }
+  }
+}
+"""
+
+
+"""
+mutation{
+  createCloneMcqExam(clonedBy:1,name:"My Practise", originUid:3){
+    cloneMcqExam{
+      id
+      uid
+      name
+      dateTime
+      origin{
+        id
+        uid
+        name
+        totalMcq
+        marks
+        dateTime
+        createdBy{
+          id
+          name
+          phone
+          email
+          gender
+        }
+      }
+      clonedBy{
+        id
+        name
+				phone
+        email
+        gender
+      }
+    }
+  }
+}
+
+"""
+
+
+"""
+mutation{
+  createMcqExamItem(examUid:1,mcqUid:1){
+    mcqExamItem{
+      id
+      uid
+      mcq{
+      	id
+      	uid
+        question
+        option1
+        option2
+        option3
+        option4
+        answer
+        summary
+        level
+      }
+      exam{
+        id
+        uid
+        name
+        dateTime
+        totalMcq
+        marks
+        createdBy{
+          name
+          phone
+          email
+          gender
+        }
+      }
+    }
+  }
+}
+"""
+
+
+"""
+mutation{
+  createOmr(answer:3,mcqUid:1, reportUid:8){
+    omr{
+      id
+      uid
+      correct
+      mcq{
+        question
+        answer
+      }
+    }
+  }
+}
+"""
+
+
+
+
+"""
+query{
+  allMcqExams{
+    edges{
+      node{
+        id
+        uid
+        name
+        dateTime
+        marks
+        totalMcq
+        createdBy{
+          id
+          name
+          phone
+          email
+        }
+        report{
+          id
+          uid
+          result
+        }
+        mcqexamitemSet{
+          edges{
+            node{
+              mcq{
+                uid
+                question
+                option1
+                option2
+                option3
+                option4
+                answer
+                summary
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+"""

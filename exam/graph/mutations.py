@@ -48,6 +48,7 @@ class CreateCloneMCQExam(graphene.Mutation):
 		new_clone_mcq_exam.origin_id = origin_uid
 		new_clone_mcq_exam.cloned_by_id = cloned_by
 		report = MCQReport(user_id=cloned_by, result=0)
+		report.save()
 		new_clone_mcq_exam.report = report
 		new_clone_mcq_exam.save()
 
@@ -64,6 +65,7 @@ class CreateMCQExamItem(graphene.Mutation):
 
 	def mutate(self, info, mcq_uid, exam_uid):
 		new_mcq_exam_item = MCQExamItem(mcq_id=mcq_uid,exam_id=exam_uid)
+		new_mcq_exam_item.save()
 		return CreateMCQExamItem(mcq_exam_item=new_mcq_exam_item)
 
 
@@ -84,6 +86,7 @@ class CreateOMR(graphene.Mutation):
 				new_omr.correct=True
 			else:
 				new_omr.correct=False
+			new_omr.save()
 			return CreateOMR(omr=new_omr)
 		except ObjectDoesNotExist as e:
 			return None

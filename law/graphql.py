@@ -1,3 +1,5 @@
+from account.graph.schema import Query as AccountQuery
+
 from blog.graph.schema import Query as BlogQuery
 from blog.graph.schema import Mutation as BlogMutation
 
@@ -6,7 +8,7 @@ from exam.graph.schema import Mutation as ExamMutation
 
 from graphene import ObjectType, Schema as _SCHEMA
 
-class Query(BlogQuery, ExamQuery, ObjectType):
+class Query(AccountQuery, BlogQuery, ExamQuery, ObjectType):
 	pass
 
 class Mutation(BlogMutation, ExamMutation, ObjectType):
