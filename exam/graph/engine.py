@@ -1,177 +1,199 @@
-"""
-mutation {
-  createMcqExam(name:"MY Exam", level:2, totalMcq:10, marks:20, createdBy:1,public:true){
-    mcqExam{
-      id
-      uid
-      name
-      level
-      totalMcq
-      marks
-      dateTime
-      createdBy{
-        id
-        name
-        phone
-        email
-        gender
-      }
-      mcqexamitemSet{
-        edges{
-          node{
-            mcq{
-              question
-              option1
-              option2
-              option3
-              option4
-              answer
-              summary
-            }
-          }
-        }
-      }
-    }
-  }
-}
-"""
+from law.graphql import execute
 
 
-"""
-mutation{
-  createCloneMcqExam(clonedBy:1,name:"My Practise", originUid:3){
-    cloneMcqExam{
-      id
-      uid
-      name
-      dateTime
-      origin{
-        id
-        uid
-        name
-        totalMcq
-        marks
-        dateTime
-        createdBy{
-          id
-          name
-          phone
-          email
-          gender
-        }
-      }
-      clonedBy{
-        id
-        name
-				phone
-        email
-        gender
-      }
-    }
-  }
-}
+class Mutation:
 
-"""
+    def create_mcq_exam(data):
+        if data['public']:
+            data['public'] = 1
+        else:
+            data['public'] = 0
 
-
-"""
-mutation{
-  createMcqExamItem(examUid:1,mcqUid:1){
-    mcqExamItem{
-      id
-      uid
-      mcq{
-      	id
-      	uid
-        question
-        option1
-        option2
-        option3
-        option4
-        answer
-        summary
-        level
-      }
-      exam{
-        id
-        uid
-        name
-        dateTime
-        totalMcq
-        marks
-        createdBy{
-          name
-          phone
-          email
-          gender
-        }
-      }
-    }
-  }
-}
-"""
+        query = """
+            mutation {{
+              createMcqExam(name:"{}", level:{}, totalMcq:{}, marks:{}, createdBy:{}, public:{}) {{
+                mcqExam {{
+                  id
+                  uid
+                  name
+                  level
+                  totalMcq
+                  marks
+                  dateTime
+                  createdBy {{
+                    id
+                    name
+                    phone
+                    email
+                    gender
+                  }}
+                  mcqexamitemSet {{
+                    edges {{
+                      node {{
+                        mcq {{
+                          question
+                          option1
+                          option2
+                          option3
+                          option4
+                          answer
+                          summary
+                        }}
+                      }}
+                    }}
+                  }}
+                }}
+              }}
+            }}
+        """.format(data['name'],data['level'],data['total_mcq'],data['marks'],
+            data['created_by'].id, data['public'])
+        return execute(query)
 
 
-"""
-mutation{
-  createOmr(answer:3,mcqUid:1, reportUid:8){
-    omr{
-      id
-      uid
-      correct
-      mcq{
-        question
-        answer
-      }
-    }
-  }
-}
-"""
-
-
-
-
-"""
-query{
-  allMcqExams{
-    edges{
-      node{
-        id
-        uid
-        name
-        dateTime
-        marks
-        totalMcq
-        createdBy{
-          id
-          name
-          phone
-          email
-        }
-        report{
-          id
-          uid
-          result
-        }
-        mcqexamitemSet{
-          edges{
-            node{
-              mcq{
+    def create_clone_mcq_exam(data):
+        query = """
+          mutation {{
+            createCloneMcqExam(clonedBy:{},name:"{}", originUid:{}) {{
+              cloneMcqExam {{
+                id
                 uid
-                question
-                option1
-                option2
-                option3
-                option4
-                answer
-                summary
+                name
+                dateTime
+                origin {{
+                  id
+                  uid
+                  name
+                  totalMcq
+                  marks
+                  dateTime
+                  createdBy {{
+                    id
+                    name
+                    phone
+                    email
+                    gender
+                  }}
+                }}
+                clonedBy {{
+                  id
+                  name
+                  phone
+                  email
+                  gender
+                }}
+              }}
+            }}
+          }}
+        """.format(data['cloned_by'].id, data['name'], data['origin'].uid)
+        return execute(query)
+
+
+    def create_mcq_exam_item(data):
+        query = """
+            mutation {{
+              createMcqExamItem(examUid:{}, mcqUid:{}) {{
+                mcqExamItem {{
+                  id
+                  uid
+                  mcq {{
+                    uid
+                    question
+                    option1
+                    option2
+                    option3
+                    option4
+                    answer
+                    summary
+                    level
+                  }}
+                  exam {{
+                    id
+                    uid
+                    name
+                    dateTime
+                    totalMcq
+                    marks
+                    createdBy {{
+                      name
+                      phone
+                      email
+                      gender
+                    }}
+                  }}
+                }}
+              }}
+            }}
+        """.format(data['exam'].uid, data['mcq'].uid)
+        return execute(query)
+
+
+
+    def create_omr(data):
+        query = """
+            mutation {{
+              createOmr(answer:{},mcqUid:{}, reportUid:{}) {{
+                omr {{
+                  id
+                  uid
+                  correct
+                  mcq {{
+                    question
+                    answer
+                  }}
+                }}
+              }}
+            }}
+        """.format(data['answer'], data['mcq'].uid, data['report'].uid)
+        return execute(query)
+
+
+
+
+
+class Query:
+
+    def all_mcq_exams():
+        query = """
+            query {
+              allMcqExams {
+                edges {
+                  node {
+                    id
+                    uid
+                    name
+                    dateTime
+                    marks
+                    totalMcq
+                    createdBy {
+                      id
+                      name
+                      phone
+                      email
+                    }
+                    report {
+                      id
+                      uid
+                      result
+                    }
+                    mcqexamitemSet {
+                      edges {
+                        node {
+                          mcq {
+                            uid
+                            question
+                            option1
+                            option2
+                            option3
+                            option4
+                            answer
+                            summary
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
-          }
-        }
-      }
-    }
-  }
-}
-
-"""
+        """
+        return execute(query)

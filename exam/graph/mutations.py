@@ -11,7 +11,7 @@ class CreateMCQExam(graphene.Mutation):
 		name = graphene.String(required=True)
 		level = graphene.Int(required=True)
 		total_mcq = graphene.Int(required=True)
-		public = graphene.Boolean(required=True)
+		public = graphene.Int(required=False)
 		created_by = graphene.ID(required=True)
 		marks = graphene.Int(required=False)
 
