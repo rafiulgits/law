@@ -152,48 +152,64 @@ class Mutation:
 
 class Query:
 
-    def all_mcq_exams():
+    def all_mcq_exams(**kwargs):
+        query_filter = "public:true"
+        user_id = kwargs.get('user_id', None)
+        if user_id:
+          query_filter = """{}, createdBy:{}""".format(query_filter, user_id)
         query = """
-            query {
-              allMcqExams {
-                edges {
-                  node {
+            query {{
+              allMcqExams({}) {{
+                edges {{
+                  node {{
                     id
                     uid
                     name
                     dateTime
                     marks
                     totalMcq
-                    createdBy {
+                    createdBy {{
                       id
                       name
-                      phone
-                      email
-                    }
-                    report {
-                      id
-                      uid
-                      result
-                    }
-                    mcqexamitemSet {
-                      edges {
-                        node {
-                          mcq {
-                            uid
-                            question
-                            option1
-                            option2
-                            option3
-                            option4
-                            answer
-                            summary
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-        """
+                    }}
+                  }}
+                }}
+              }}
+            }}
+        """.format(query_filter)
         return execute(query)
+
+
+    def mcq_exam(uid):
+      query = """
+        query {{
+          mcqExam(uid:{}) {{
+            id
+            uid
+            name
+            dateTime
+            marks
+            totalMcq
+            public
+            createdBy {{
+              id
+              name
+            }}
+            mcqexamitemSet {{
+              edges {{
+                node {{
+                  uid
+                  mcq {{
+                    question
+                    option1
+                    option2
+                    option3
+                    option4
+                  }}
+                }}
+              }}
+            }}
+          }}
+        }}
+      """.format(uid)
+      return execute(query)

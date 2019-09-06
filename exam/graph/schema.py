@@ -1,3 +1,6 @@
+from django.core.exceptions import ObjectDoesNotExist
+
+
 from exam.graph import types
 from exam.graph import mutations
 from exam.models import *
@@ -21,6 +24,24 @@ class Query(graphene.ObjectType):
 
 	omr = graphene.Field(types.OMRType, uid=graphene.ID())
 	all_omrs = DjangoFilterConnectionField(types.OMRType)
+
+
+	def resolve_mcq_exam(self, info, **kwargs):
+		uid = kwargs.get('uid', None)
+		if uid is None:
+			raise ValueError('you must provide uid')
+		try:
+			obj = MCQExam.objects.get(uid=uid)
+			return obj
+		except ObjectDoesNotExist:
+			raise ValueError('must provide an valid uid')
+
+
+	def resolve_all_mcq_exams(self, info, **kwargs):
+		created_by = kwargs.get('created_by', None)
+		if created_by is not None:
+			return MCQExam.objects.filter(created_by_id=created_by)
+		return MCQExam.objects.all()
 
 
 

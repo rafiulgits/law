@@ -59,8 +59,25 @@ class CreateOMR(APIView):
 		raise ValidationError(serializer.errors)
 
 
-class AllMCQExams(APIView):
+class PublicMCQExams(APIView):
 
 	def get(self, request, format=None):
-		result = Query.all_mcq_exams()
+		result = Query.all_mcq_exams(user_id=1)
+		return HttpResponse(result, content_type='application/json')
+
+
+
+class MCQExam(APIView):
+
+	def get(self, request, uid, format=None):
+		result = Query.mcq_exam(uid)
+		return HttpResponse(result, content_type='application/json')
+
+
+
+
+class UserMCQExams(APIView):
+	permission_classes = (IsAuthenticated, )
+	def get(self, request, format=None):
+		result = Query.all_mcq_exams(user_id=request.user.id)
 		return HttpResponse(result, content_type='application/json')
