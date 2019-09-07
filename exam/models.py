@@ -21,6 +21,9 @@ class MCQExam(models.Model):
 	date_time = models.DateTimeField(auto_now_add=True)
 	report = models.OneToOneField(MCQReport, on_delete=models.SET_NULL, null=True,blank=True)
 
+	def __str__(self):
+		return str(self.uid) + "-" + self.name
+
 
 class MCQExamItem(models.Model):
 	uid = models.BigAutoField(primary_key=True)

@@ -62,7 +62,7 @@ class CreateOMR(APIView):
 class PublicMCQExams(APIView):
 
 	def get(self, request, format=None):
-		result = Query.all_mcq_exams(user_id=1)
+		result = Query.all_mcq_exams()
 		return HttpResponse(result, content_type='application/json')
 
 
