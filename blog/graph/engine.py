@@ -44,6 +44,7 @@ class Query():
 			        }}
 			        selfLoc {{
 			          id
+					  uid
 			        }}
 			        postSet {{
 			          uid
@@ -108,8 +109,6 @@ class Mutation():
 			    post {{
 			      uid
 			      title
-			      body
-			      dateTime
 			    }}
 			  }}
 			}}
