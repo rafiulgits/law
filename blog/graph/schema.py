@@ -2,15 +2,18 @@ from blog.graph import types
 from blog.graph import mutations
 from blog.models import *
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from graphene_django.filter import DjangoFilterConnectionField
 import graphene
+from graphql_relay.node.node import from_global_id
 
 
 class Query(graphene.ObjectType):
 	post = graphene.Field(types.PostType, uid=graphene.ID())
 	all_posts = graphene.List(types.PostType)
 
-	folder = graphene.Field(types.FolderType, self_loc=graphene.Int())
+	folder = graphene.Field(types.FolderType, self_loc=graphene.String(), self_loc_uid=graphene.Int())
 	all_folders = DjangoFilterConnectionField(types.FolderType)
 
 	category = graphene.relay.Node.Field(types.CategoryType)
@@ -47,9 +50,20 @@ class Query(graphene.ObjectType):
 		return MCQ.objects.all()
 
 	def resolve_folder(self, info, **kwargs):
-		self_loc = kwargs.get('self_loc')
-		folder = Folder.objects.get(self_loc=self_loc)
-		return folder
+		self_loc_uid = kwargs.get('self_loc_uid', None)
+		if self_loc_uid:
+			try:
+				return Folder.objects.get(self_loc=self_loc_uid)
+			except ObjectDoesNotExist:
+				return None
+		self_loc = kwargs.get('self_loc', None)
+		if self_loc:
+			try:
+				uid = from_global_id(self_loc)[1]
+				return Folder.objects.get(self_loc=uid)
+			except Exception:
+				pass
+		return None
 
 	def resoleve_all_cqs(self, info, **kwargs):
 		return CQ.objects.all()

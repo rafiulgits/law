@@ -23,6 +23,17 @@ class Query():
 	def explore_folder(rootLoc):
 		query = """
 			query {{
+			  folder(selfLoc:"{}") {{
+			  	selfLoc {{
+			      id
+			      uid
+			    }}
+			    name
+			    distance
+			    category {{
+			      name
+			    }}
+			  }}
 			  allFolders(rootLoc:"{}") {{
 			    edges {{
 			      node {{
@@ -42,8 +53,7 @@ class Query():
 			    }}
 			  }}
 			}}
-		""".format(rootLoc)
-		
+		""".format(rootLoc, rootLoc)
 		return execute(query)
 
 	def get_post(uid):
@@ -83,10 +93,6 @@ class Mutation():
 			      selfLoc {{
 			        id
 			        uid
-			      }}
-			      postSet {{
-			        uid
-			        title
 			      }}
 			    }}
 			  }}
