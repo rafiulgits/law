@@ -1,6 +1,10 @@
-from blog.graph.engine import Query, Mutation
-from blog.serializers import PostSerializer, FolderSerializer, MCQSerializer
+from blog.graph.engine import Query, Create, Update, Delete
+from blog.serializers import (PostSerializer, FolderSerializer, MCQSerializer, 
+	MCQTagSerializer)
 from django.shortcuts import HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
+
+from blog.models import Category
 
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, ValidationError
@@ -16,7 +20,8 @@ class AllSubjects(APIView):
 		return HttpResponse(result, content_type='application/json')
 
 
-class ExploreFolder(APIView):
+
+class FolderManager(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request, format=None):
@@ -26,35 +31,49 @@ class ExploreFolder(APIView):
 		result = Query.explore_folder(location)
 		return HttpResponse(result, content_type='application/json')
 
-
-class SinglePost(APIView):
-	permission_classes = (IsAuthenticated,)
-
-	def get(self, request, uid):
-		result = Query.get_post(uid)
-		return HttpResponse(result, content_type='application/json')
-
-
-class CreateFolder(APIView):
-	permission_classes = (IsAuthenticated,)
-
 	def post(self, request):
 		serializer = FolderSerializer(data=request.POST)
 		if serializer.is_valid():
-			result = Mutation.create_folder(serializer.validated_data)
+			result = Create.folder(serializer.validated_data)
 			return HttpResponse(result, content_type='application/json')
 		raise ValidationError(serializer.errors)
 
+	def delete(self, request):
+		if request.POST.get('self_loc_uid', None) is None:
+			raise ValidationError('folder self location required')
+		result = Delete.folder(request.POST)
+		return HttpResponse(result, content_type='application/json')
 
-class CreatePost(APIView):
+
+
+
+
+class PostManager(APIView):
+
 	permission_classes = (IsAuthenticated,)
+
+	def get(self, request):
+		uid = request.GET.get('uid', None)
+		if uid is None:
+			raise ValidationError('post uid required')
+		else:
+			result = Query.get_post(uid)
+			return HttpResponse(result, content_type='application/json')
 
 	def post(self, request):
 		serializer = PostSerializer(data=request.POST)
 		if serializer.is_valid():
-			result = Mutation.create_post(serializer.validated_data)
+			result = Create.post(serializer.validated_data)
 			return HttpResponse(result, content_type='application/json')
 		raise ValidationError(serializer.errors)
+
+	def delete(self, request):
+		if request.POST.get('post_uid', None) is None:
+			raise ValidationError('post UID required')
+		result = Delete.post(request.POST)
+		return HttpResponse(result, content_type='application/json')
+
+
 
 
 class CreateMCQ(APIView):
@@ -63,6 +82,25 @@ class CreateMCQ(APIView):
 	def post(self, request):
 		serializer = MCQSerializer(data=request.POST)
 		if serializer.is_valid():
-			result = Mutation.create_mcq(serializer.validated_data)
+			result = Create.mcq(serializer.validated_data)
 			return HttpResponse(result, content_type='application/json')
 		raise ValidationError(serializer.errors)
+
+
+
+
+class MCQTagManager(APIView):
+
+	def post(self, request):
+		serializer = MCQTagSerializer(data=request.POST)
+		if serializer.is_valid():
+			result = Create.mcq_tag(serializer.validated_data)
+			return HttpResponse(result, content_type='application/json')
+		raise ValidationError(serializer.errors)
+
+
+	def delete(self, request):
+		if request.POST.get('mcq_tag_uid', None) is None:
+			raise ValidationError('mcq tag uid is required')
+		result = Delete.mcq_tag(request.POST)
+		return HttpResponse(result, content_type='application/json')

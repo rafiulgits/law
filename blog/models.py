@@ -1,3 +1,5 @@
+from account.models import Account
+
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -48,7 +50,9 @@ class Post(models.Model):
 	title = models.TextField(max_length=500)
 	body = models.TextField()
 	folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
-	date_time = models.DateTimeField(auto_now=True)
+	date_time = models.DateTimeField(auto_now_add=True)
+	entry_by = models.ForeignKey(Account, blank=True, null=True, on_delete=models.SET_NULL)
+	last_update = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
 		return self.title
@@ -64,6 +68,7 @@ class MCQ(models.Model):
 	answer = models.SmallIntegerField(default=1,validators=[MaxValueValidator(4), MinValueValidator(1)])
 	summary = models.CharField(max_length=250)
 	level = models.SmallIntegerField(default=1,validators=[MaxValueValidator(3), MinValueValidator(1)])
+	entry_by = models.ForeignKey(Account, blank=True, null=True, on_delete=models.SET_NULL)
 
 	def __str__(self):
 		return self.question
@@ -72,6 +77,7 @@ class MCQ(models.Model):
 class CQ(models.Model):
 	uid = models.AutoField(primary_key=True)
 	question = models.TextField()
+	created_time = models.DateTimeField(auto_now_add=True)
 	def __str__(self):
 		return self.question
 
@@ -82,7 +88,7 @@ class MCQTag(models.Model):
 	folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
 
 	class Meta:
-		unique_together = ('uid', 'folder')
+		unique_together = ('mcq', 'folder')
 
 
 

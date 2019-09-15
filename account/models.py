@@ -95,3 +95,13 @@ class Account(AbstractBaseUser,PermissionsMixin):
 
 	def get_username(self):
 		return self.phone
+
+
+
+
+
+class Profile(models.Model): 
+	uid = models.AutoField(primary_key=True)
+	account = models.OneToOneField(Account, on_delete=models.CASCADE)
+	institute = models.CharField(max_length=250)
+	bar = models.CharField(max_length=250)

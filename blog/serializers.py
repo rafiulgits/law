@@ -1,7 +1,8 @@
-from blog.models import Folder, Post, MCQ, Category
+from blog.models import (Folder, Post, MCQ, Category, MCQTag)
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.serializers import (
 	ModelSerializer,ReadOnlyField, ValidationError,CharField, IntegerField )
+
 
 class FolderSerializer(ModelSerializer):
 	category = CharField(max_length=10)
@@ -21,11 +22,19 @@ class FolderSerializer(ModelSerializer):
 class PostSerializer(ModelSerializer):
 	class Meta:
 		model = Post
-		fields = ['title','body', 'folder']
+		fields = ['title','body', 'folder', 'entry_by']
+
 
 
 class MCQSerializer(ModelSerializer):
 	class Meta:
 		model = MCQ
 		fields = ['question', 'option1', 'option2', 'option3',
-				'option4', 'answer', 'summary', 'level']
+				'option4', 'answer', 'summary', 'level', 'entry_by']
+
+
+
+class MCQTagSerializer(ModelSerializer):
+	class Meta:
+		model = MCQTag
+		fields = ['mcq', 'folder']

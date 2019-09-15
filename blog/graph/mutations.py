@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import graphene
 
 
+# Category
 class CreateCategory(graphene.Mutation):
 	class Arguments():
 		name = graphene.String(required=True)
@@ -18,23 +19,21 @@ class CreateCategory(graphene.Mutation):
 		return CreateCategory(category=category_obj)
 
 
-# class UpdateCategory(graphene.Mutation):
-# 	class Arguments():
-# 		uid = graphene.Int(required=True)
-# 		name = graphene.String(required=True)
+class DeleteCategory(graphene.Mutation):
+	class Arguments():
+		name = graphene.String(required=True)
 
-# 	category = graphene.Field(types.CategoryType)
+	category = graphene.Field(types.CategoryType)
 
-# 	def mutate(self, info, uid, name):
-# 		try:
-# 			category_obj = Category.objects.get(uid=uid)
-# 			category_obj.name = name
-# 			category_obj.save()
-# 			return UpdateCategory(category=category_obj)
-# 		except ObjectDoesNotExist as e:
-# 			return UpdateCategory(category=None)
+	def mutate(self, info, name):
+		category_obj = Category.objects.filter(name__iexact=name).first()
+		if category_obj:
+			category_obj.delete()
+			return DeleteCategory(category=category_obj)
+		return None
 
 
+# Folder
 class CreateFolder(graphene.Mutation):
 	class Arguments():
 		name = graphene.String(required=True)
@@ -93,6 +92,21 @@ class UpdateFolder(graphene.Mutation):
 			return UpdateFolder(folder=None)
 
 
+class DeleteFolder(graphene.Mutation):
+	class Arguments():
+		self_loc_uid = graphene.ID(required=True)
+
+	folder = graphene.Field(types.FolderType)
+
+	def mutate(self, info, self_loc_uid):
+		folder_obj = Folder.objects.filter(self_loc_id=self_loc_uid).first()
+		if folder_obj:
+			folder_obj.delete()
+			return DeleteFolder(folder=folder_obj)
+		return None
+
+
+# Post
 class CreatePost(graphene.Mutation):
 	class Arguments():
 		title = graphene.String(required=True)
@@ -136,6 +150,21 @@ class UpdatePost(graphene.Mutation):
 			return UpdatePost(post=post_obj)
 
 
+class DeletePost(graphene.Mutation):
+	class Arguments():
+		post_uid = graphene.ID()
+
+	post = graphene.Field(types.PostType)
+
+	def mutate(self, info, post_uid):
+		post_obj = Post.objects.filter(uid=post_uid).first()
+		if post_obj:
+			post_obj.delete()
+			return DeletePost(post=post_obj)
+		return None
+
+
+# MCQ
 class CreateMCQ(graphene.Mutation):
 	class Arguments():
 		question = graphene.String(required=True)
@@ -201,6 +230,52 @@ class UpdateMCQ(graphene.Mutation):
 			return UpdateMCQ(mcq=None)
 
 
+class DeleteMCQ(graphene.Mutation):
+	class Arguments():
+		mcq_uid = graphene.ID(required=True)
+
+	mcq = graphene.Field(types.MCQType)
+
+	def mutate(self, info, mcq_uid):
+		mcq_obj = MCQ.objects.filter(uid=mcq_uid).first()
+		if mcq_obj:
+			mcq_obj.delete()
+			return DeleteMCQ(mcq=mcq_obj)
+		return None
+
+
+class CreateMCQTag(graphene.Mutation):
+	class Arguments():
+		mcq_uid = graphene.Int(required=True)
+		folder_loc = graphene.Int(required=True)
+
+	mcq_tag = graphene.Field(types.MCQTagType)
+
+	def mutate(self, info, mcq_uid, folder_loc):
+		try:
+			mcq = MCQ.objects.get(uid=mcq_uid)
+			folder = Folder.objects.get(self_loc_id=folder_loc)
+			mcq_tag_obj = MCQTag.objects.create(mcq=mcq, folder=folder)
+			return CreateMCQTag(mcq_tag=mcq_tag_obj)
+		except ObjectDoesNotExist as e:
+			return CreateMCQTag(mcq_tag=None)
+
+
+class DeleteMCQTag(graphene.Mutation):
+	class Arguments():
+		mcq_tag_uid = graphene.ID(required=True)
+
+	mcq_tag = graphene.Field(types.MCQTagType)
+
+	def mutate(self, info, mcq_tag_uid):
+		mcq_tag_obj = MCQTag.objects.filter(uid=mcq_tag_uid).first()
+		if mcq_tag_obj:
+			mcq_tag_obj.delete()
+			return DeleteMCQTag(mcq_tag=mcq_tag_obj)
+		return None
+
+
+# CQ
 class CreateCQ(graphene.Mutation):
 	class Arguments():
 		question = graphene.String(required=True)
@@ -227,40 +302,18 @@ class UpdateCQ(graphene.Mutation):
 			return UpdateCQ(cq=cq_obj)
 
 
-class CreateMCQTag(graphene.Mutation):
-	class Arguments():
-		mcq_uid = graphene.Int(required=True)
-		folder_loc = graphene.Int(required=True)
+class DeleteCQ(graphene.Mutation):
+	class Atguments():
+		cq_uid = graphene.ID(required=True)
 
-	mcq_tag = graphene.Field(types.MCQTagType)
+	cq = graphene.Field(types.CQType)
 
-	def mutate(self, info, mcq_uid, folder_loc):
-		try:
-			mcq = MCQ.objects.get(uid=mcq_uid)
-			folder = Folder.objects.get(self_loc_id=folder_loc)
-			mcq_tag_obj = MCQTag.objects.create(mcq=mcq, folder=folder)
-			return CreateMCQTag(mcq_tag=mcq_tag_obj)
-		except ObjectDoesNotExist as e:
-			return CreateMCQTag(mcq_tag=None)
-
-
-class UpdateMCQTag(graphene.Mutation):
-	class Arguments():
-		uid = graphene.Int(required=True)
-		mcq_uid = graphene.Int(required=True)
-		folder_loc = graphene.Int(required=True)
-
-	mcq_tag = graphene.Field(types.MCQTagType)
-
-	def mutate(self, info, uid, mcq_uid, folder_loc):
-		try:
-			mcq_tag_obj = MCQTag.objects.get(uid=uid, mcq_uid=mcq_uid)
-			folder = Folder.objects.get(self_loc_id=folder_loc)
-			mcq_tag_obj.folder = folder
-			mcq_tag_obj.save()
-			return UpdateMCQTag(mcq_tag=mcq_tag_obj)
-		except ObjectDoesNotExist as e:
-			return UpdateMCQTag(mcq_tag=None)
+	def mutate(self, info, cq_uid):
+		cq_obj = CQ.objects.filter(uid=cq_uid).first()
+		if cq_obj:
+			cq_obj.delete()
+			return DeleteCQ(cq=cq_obj)
+		return None
 
 
 class CreateCQTag(graphene.Mutation):
@@ -278,22 +331,17 @@ class CreateCQTag(graphene.Mutation):
 			return CreateCQTag(cq_tag=cq_tag_obj)
 		except ObjectDoesNotExist as e:
 			return CreateCQTag(cq_tag=None)
-		
 
-class UpdateCQTag(graphene.Mutation):
+
+class DeleteCQTag(graphene.Mutation):
 	class Arguments():
-		uid = graphene.Int(required=True)
-		cq_uid = graphene.Int(required=True)
-		folder_loc = graphene.Int(required=True)
+		cq_tag_uid = graphene.ID(required=True)
 
 	cq_tag = graphene.Field(types.CQTagType)
 
-	def mutate(self, info, uid, cq_uid, folder_loc):
-		try:
-			cq_tag_obj = CQTag.objects.get(uid=uid, cq_uid=cq_uid)
-			folder = Folder.objects.get(self_loc_id=folder_loc)
-			cq_tag_obj.folder = folder
-			cq_tag_obj.save()
-			return UpdateCQTag(cq_tag=cq_tag_obj)
-		except ObjectDoesNotExist as e:
-			return CreateCQTag(cq_tag=None)
+	def mutate(self, info, cq_tag_uid):
+		cq_tag_obj = CQTag.objects.filter(uid=cq_tag_uid).first()
+		if cq_tag_obj:
+			cq_tag_obj.delete()
+			return DeleteCQTag(cq_tag=cq_tag_obj)
+		return None
