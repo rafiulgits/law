@@ -7,4 +7,5 @@ urlpatterns = [
 	path('post/', views.PostManager.as_view(), name='post-manager'),
 	path('mcq-create/', views.CreateMCQ.as_view(), name='mcq-create'),
 	path('mcq-tag/', views.MCQTagManager.as_view(), name='mcq-tag-manager'),
+	path('mcq-list/', views.MCQList.as_view(), name='mcq-list'),
 ]

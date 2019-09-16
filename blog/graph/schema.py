@@ -22,10 +22,12 @@ class Query(graphene.ObjectType):
 	path = graphene.relay.Node.Field(types.PathType)
 	all_paths = DjangoFilterConnectionField(types.PathType)
 
-	all_mcqs = graphene.List(types.MCQType)
+	all_mcqs = DjangoFilterConnectionField(types.MCQType)
 
 	mcq_tag = graphene.relay.Node.Field(types.MCQTagType)
 	all_mcq_tags = DjangoFilterConnectionField(types.MCQTagType)
+
+	all_mcq_labels = DjangoFilterConnectionField(types.MCQLabelType)
 
 	all_cqs = graphene.List(types.CQType)
 

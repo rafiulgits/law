@@ -43,11 +43,8 @@ class PostType(DjangoObjectType):
 class MCQType(DjangoObjectType):
 	class Meta:
 		model = models.MCQ
-
-
-class CQType(DjangoObjectType):
-	class Meta:
-		model = models.CQ
+		filter_fields = {}
+		interfaces = (relay.Node, )
 
 
 
@@ -58,6 +55,23 @@ class MCQTagType(DjangoObjectType):
 			'folder' : ['exact'],
 		}
 		interfaces = (relay.Node,)
+
+
+class MCQLabelType(DjangoObjectType):
+	class Meta:
+		model = models.MCQLabel
+		filter_fields = {
+			'name' : ['exact', 'icontains'],
+		}
+		interfaces = (relay.Node,)
+
+
+
+
+class CQType(DjangoObjectType):
+	class Meta:
+		model = models.CQ
+
 
 
 

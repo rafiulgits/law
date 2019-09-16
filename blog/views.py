@@ -88,6 +88,17 @@ class CreateMCQ(APIView):
 
 
 
+class MCQList(APIView):
+	def get(self, request):
+		if request.GET.get('after', None):
+			result = Query.mcq_list(after=request.GET.get('after'))
+		elif request.GET.get('before', None):
+			result = Query.mcq_list(before=request.GET.get('before'))
+		else:
+			result = Query.mcq_list()
+		return HttpResponse(result, content_type='application/json')
+
+
 
 class MCQTagManager(APIView):
 

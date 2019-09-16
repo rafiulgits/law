@@ -157,6 +157,47 @@ class Query():
 		return execute(query)
 
 
+	def mcq_list(after=None, before=None):
+		params = "first:10"
+		if after:
+			params = """{}, after:"{}" """.format(params, after)
+		elif before:
+			params = """{}, before:"{}" """.format(params, before)
+		query = """
+			query {{
+			  allMcqs ( {} ) {{
+			    pageInfo {{
+			      hasNextPage
+			      hasPreviousPage
+			    }}
+			    edges {{
+			      cursor
+			      node {{ 
+			        id
+			        uid
+			        question
+			        option1
+			        option2
+			        option3
+			        option4
+			        answer
+			        summary
+			        mcqlabelSet {{
+			          edges {{
+			            node {{
+			              name
+			            }}
+			          }}
+			        }}
+			      }}
+			    }}
+			  }}
+			}}
+		""".format(params)
+		return execute(query)
+
+
+
 
 class Update():
 	def folder(data):

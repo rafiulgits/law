@@ -65,21 +65,23 @@ class MCQ(models.Model):
 	option2 = models.CharField(max_length=250)
 	option3 = models.CharField(max_length=250)
 	option4 = models.CharField(max_length=250)
-	answer = models.SmallIntegerField(default=1,validators=[MaxValueValidator(4), MinValueValidator(1)])
-	summary = models.CharField(max_length=250)
-	level = models.SmallIntegerField(default=1,validators=[MaxValueValidator(3), MinValueValidator(1)])
+	answer = models.SmallIntegerField(validators=[MaxValueValidator(4), MinValueValidator(1)])
+	summary = models.TextField()
 	entry_by = models.ForeignKey(Account, blank=True, null=True, on_delete=models.SET_NULL)
 
 	def __str__(self):
 		return self.question
 
 
-class CQ(models.Model):
+
+class MCQLabel(models.Model):
 	uid = models.AutoField(primary_key=True)
-	question = models.TextField()
-	created_time = models.DateTimeField(auto_now_add=True)
+	name = models.CharField(max_length=80, unique=True)
+	questions = models.ManyToManyField(MCQ)
+
 	def __str__(self):
-		return self.question
+		return "{}-{}".format(self.name)
+
 
 
 class MCQTag(models.Model):
@@ -89,6 +91,16 @@ class MCQTag(models.Model):
 
 	class Meta:
 		unique_together = ('mcq', 'folder')
+
+
+
+class CQ(models.Model):
+	uid = models.AutoField(primary_key=True)
+	question = models.TextField()
+	created_time = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.question
 
 
 
