@@ -1,6 +1,6 @@
 from blog.graph.engine import Query, Create, Update, Delete
 from blog.serializers import (PostSerializer, FolderSerializer, MCQSerializer, 
-	MCQTagSerializer)
+	MCQTagSerializer, MCQIssueSerializer)
 from django.shortcuts import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -100,6 +100,8 @@ class MCQList(APIView):
 
 
 
+
+
 class MCQTagManager(APIView):
 
 	def post(self, request):
@@ -115,3 +117,19 @@ class MCQTagManager(APIView):
 			raise ValidationError('mcq tag uid is required')
 		result = Delete.mcq_tag(request.POST)
 		return HttpResponse(result, content_type='application/json')
+
+
+
+
+
+class MCQIssueManager(APIView):
+
+	permission_classes = (IsAuthenticated, )
+
+	def post(self, request):
+		serializer = MCQIssueSerializer(request.POST)
+		serializer.set_current_user(request.user)
+		if serializer.is_valid():
+			mcq_issue = serializer.create(serializer.validated_data)
+			return HttpResponse('{"response": "ok"}', content_type='application/json')
+		return HttpResponse(serializer.errors, status=400)

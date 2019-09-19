@@ -102,6 +102,7 @@ class MCQIssue(models.Model):
 	user = models.ForeignKey(Account, on_delete=models.CASCADE)
 	mcq = models.ForeignKey(MCQ, on_delete=models.CASCADE)
 	body = models.TextField()
+	is_solved = models.BooleanField(default=False)
 	date_time = models.DateTimeField(auto_now_add=True)
 
 
