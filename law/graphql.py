@@ -4,14 +4,13 @@ from blog.graph.schema import Query as BlogQuery
 from blog.graph.schema import Mutation as BlogMutation
 
 from exam.graph.schema import Query as ExamQuery
-from exam.graph.schema import Mutation as ExamMutation
 
 from graphene import ObjectType, Schema as _SCHEMA
 
 class Query(AccountQuery, BlogQuery, ExamQuery, ObjectType):
 	pass
 
-class Mutation(BlogMutation, ExamMutation, ObjectType):
+class Mutation(BlogMutation, ObjectType):
 	pass
 
 

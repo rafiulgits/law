@@ -1,5 +1,6 @@
 from account.models import Account
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -32,14 +33,15 @@ class Path(models.Model):
 
 
 class Folder(models.Model):
-	name = models.CharField(max_length=30)
+	name = models.CharField(max_length=250)
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
 	self_loc = models.OneToOneField(Path,on_delete=models.CASCADE, primary_key=True,related_name='self_loc')
 	root_loc = models.ForeignKey(Path, on_delete=models.CASCADE, related_name='root_loc', null=True, blank=True)
 	distance = models.SmallIntegerField(default=0)
-
 	class Meta:
 		unique_together = ('self_loc', 'root_loc')
+
+
 
 	def __str__(self):
 		return self.category.name +' - '+self.name
@@ -68,6 +70,7 @@ class MCQ(models.Model):
 	answer = models.SmallIntegerField(validators=[MaxValueValidator(4), MinValueValidator(1)])
 	summary = models.TextField()
 	entry_by = models.ForeignKey(Account, blank=True, null=True, on_delete=models.SET_NULL)
+	meta = models.CharField(max_length=250, default='')
 
 	def __str__(self):
 		return self.question
@@ -91,6 +94,16 @@ class MCQTag(models.Model):
 
 	class Meta:
 		unique_together = ('mcq', 'folder')
+
+
+
+class MCQIssue(models.Model):
+	uid = models.AutoField(primary_key=True)
+	user = models.ForeignKey(Account, on_delete=models.CASCADE)
+	mcq = models.ForeignKey(MCQ, on_delete=models.CASCADE)
+	body = models.TextField()
+	date_time = models.DateTimeField(auto_now_add=True)
+
 
 
 
