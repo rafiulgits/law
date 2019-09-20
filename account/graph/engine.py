@@ -11,6 +11,7 @@ class Query:
 			    name
 			    phone
 			    email
+				gender
 			    isStaff
 			    isSuperuser
 			    profile {{

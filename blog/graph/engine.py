@@ -96,6 +96,7 @@ class Query():
 			        distance
 			        selfLoc{
 			          id
+					  uid
 			        }
 			      }
 			    }
