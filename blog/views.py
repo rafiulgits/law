@@ -49,7 +49,6 @@ class FolderManager(APIView):
 
 
 class PostManager(APIView):
-
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
@@ -89,6 +88,8 @@ class CreateMCQ(APIView):
 
 
 class MCQList(APIView):
+	permission_classes = (IsAuthenticated,)
+
 	def get(self, request):
 		if request.GET.get('after', None):
 			result = Query.mcq_list(after=request.GET.get('after'))
@@ -103,6 +104,8 @@ class MCQList(APIView):
 
 
 class MCQTagManager(APIView):
+
+	permission_classes = (IsAuthenticated,)
 
 	def post(self, request):
 		serializer = MCQTagSerializer(data=request.POST)
@@ -123,7 +126,6 @@ class MCQTagManager(APIView):
 
 
 class MCQIssueManager(APIView):
-
 	permission_classes = (IsAuthenticated, )
 
 	def post(self, request):

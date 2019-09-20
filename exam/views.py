@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 
 
 class PublicExamList(APIView):
-
+	permission_classes = (IsAuthenticated,)
 	def get(self, request):
 		result = Query.all_mcq_exams()
 		return HttpResponse(result, content_type='application/json')
@@ -17,7 +17,6 @@ class PublicExamList(APIView):
 
 
 class MCQExam(APIView):
-
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
