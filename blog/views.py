@@ -127,7 +127,7 @@ class MCQIssueManager(APIView):
 	permission_classes = (IsAuthenticated, )
 
 	def post(self, request):
-		serializer = MCQIssueSerializer(request.POST)
+		serializer = MCQIssueSerializer(data=request.POST)
 		serializer.set_current_user(request.user)
 		if serializer.is_valid():
 			mcq_issue = serializer.create(serializer.validated_data)

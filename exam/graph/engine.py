@@ -4,24 +4,31 @@ from law.graphql import execute
 
 class Query:
     def all_mcq_exams(**kwargs):
-        query_filter = "public:true"
-        user_id = kwargs.get('user_id', None)
-        if user_id:
-          query_filter = """{}, createdBy:{}""".format(query_filter, user_id)
+        query_filter = "isPublic:true"
+        # user_id = kwargs.get('user_id', None)
+        # if user_id:
+        #   query_filter = """{}, createdBy:{}""".format(query_filter, user_id)
         query = """
             query {{
-              allMcqExams({}) {{
+              allMcqExams( {} ) {{
                 edges {{
                   node {{
                     id
                     uid
                     name
+                    isClone
+                    isPublic
                     dateTime
-                    marks
-                    totalMcq
                     createdBy {{
-                      id
                       name
+                    }}
+                    source {{
+                      totalMcq
+                      duration
+                      dateTime
+                      createdBy {{
+                        name
+                      }}
                     }}
                   }}
                 }}

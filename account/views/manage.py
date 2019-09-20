@@ -10,7 +10,6 @@ from rest_framework.views import APIView
 
 class Profile(APIView):
 	permission_classes = (IsAuthenticated,)
-	renderer_classes = (JSONRenderer,)
 
 	def get(self, request, format=None):
 		result = Query.profile(request.user.id)
@@ -18,7 +17,7 @@ class Profile(APIView):
 
 
 	def post(self, request, format=None):
-		serializer = ProfileSerializer(request.POST)
+		serializer = ProfileSerializer(data=request.POST)
 		serializer.set_current_user(request.user)
 		if serializer.is_valid():
 			profile = serializer.create(serializer.validated_data)

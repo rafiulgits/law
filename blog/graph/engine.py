@@ -169,9 +169,10 @@ class Query():
 			    pageInfo {{
 			      hasNextPage
 			      hasPreviousPage
+				  startCursor
+				  endCursor
 			    }}
 			    edges {{
-			      cursor
 			      node {{ 
 			        id
 			        uid
@@ -182,13 +183,20 @@ class Query():
 			        option4
 			        answer
 			        summary
-			        mcqlabelSet {{
-			          edges {{
-			            node {{
-			              name
-			            }}
-			          }}
-			        }}
+			        mcqtagSet {{
+					  edges {{
+					    node {{
+						  folder{{
+							id
+							name
+							selfLoc{{
+							  id
+							  uid
+							}}
+						  }}
+						}}
+					  }}
+					}}
 			      }}
 			    }}
 			  }}

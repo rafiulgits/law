@@ -8,6 +8,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 
 
+class PublicExamList(APIView):
+
+	def get(self, request):
+		result = Query.all_mcq_exams()
+		return HttpResponse(result, content_type='application/json')
+
+
+
 class MCQExam(APIView):
 
 	permission_classes = (IsAuthenticated,)
