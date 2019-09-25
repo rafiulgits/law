@@ -1,11 +1,14 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import HttpResponse
 
-from exam.serializers import (MCQExamSerializer, MCQExamCloneSerializer, ReportGeneratorSerializer)
+from exam.models import MCQExam
+from exam.serializers import (MCQExamSerializer, MCQExamCloneSerializer, 
+ReportGeneratorSerializer)
 from exam.graph.engine import  Query
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotFound
 
 
 class PublicExamList(APIView):
@@ -63,6 +66,18 @@ class MCQExam(APIView):
 
 class MCQReport(APIView):
 	permission_classes = (IsAuthenticated,)
+
+
+	def get(self, request):
+		uid = request.GET.get('uid', None)
+		if uid is None:
+			raise NotFound("provide a valid uid")
+		try:
+			result = Query.mcq_exam_report(uid)
+			return HttpResponse(result, content_type='application/json')
+		except ObjectDoesNotExist:
+			raise NotFound("request not found")
+
 
 	def post(self, request):
 		serializer = ReportGeneratorSerializer(data=request.data)
