@@ -46,10 +46,10 @@ class MCQReport(models.Model):
 	uid = models.AutoField(primary_key=True)
 	user = models.ForeignKey(Account, on_delete=models.CASCADE)
 	exam = models.OneToOneField(MCQExam, on_delete=models.CASCADE)
-	total_correct = models.PositiveSmallIntegerField()
-	total_wrong = models.PositiveSmallIntegerField()
-	total_blank = models.PositiveSmallIntegerField()
-	result = models.FloatField()
+	total_correct = models.PositiveSmallIntegerField(blank=True, null=True)
+	total_wrong = models.PositiveSmallIntegerField(blank=True, null=True)
+	total_blank = models.PositiveSmallIntegerField(blank=True, null=True)
+	result = models.FloatField(default=0.0)
 	date_time = models.DateTimeField(auto_now_add=True)
 
 
@@ -57,6 +57,6 @@ class MCQReport(models.Model):
 class OMR(models.Model):
 	uid = models.BigAutoField(primary_key=True)
 	mcq = models.ForeignKey(MCQ, on_delete=models.CASCADE)
-	answer = models.SmallIntegerField(validators=[MaxValueValidator(4),MinValueValidator(1)])
+	answer = models.PositiveIntegerField(validators=[MaxValueValidator(4),MinValueValidator(0)])
 	correct = models.BooleanField()
 	report = models.ForeignKey(MCQReport, on_delete=models.SET_NULL,null=True)
