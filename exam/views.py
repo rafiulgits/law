@@ -73,8 +73,7 @@ class MCQReport(APIView):
 		if uid is None:
 			raise NotFound("provide a valid uid")
 		try:
-			exam = MCQExam.objects.get(uid=uid)
-			result = Query.mcq_exam_report(exam.uid)
+			result = Query.mcq_exam_report(uid)
 			return HttpResponse(result, content_type='application/json')
 		except ObjectDoesNotExist:
 			raise NotFound("request not found")
