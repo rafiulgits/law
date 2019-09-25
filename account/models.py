@@ -78,8 +78,8 @@ class Account(AbstractBaseUser,PermissionsMixin):
 
 	objects = UserManager()
 
-	USERNAME_FIELD = 'phone'
-	REQUIRED_FIELDS = ['name','email',]
+	USERNAME_FIELD = 'email'
+	REQUIRED_FIELDS = ['name','phone',]
 
 
 	def has_perm(self, perm, obj=None):
