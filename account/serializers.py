@@ -1,14 +1,16 @@
 from account.models import Profile, Account
 
-from django.core.exceptions import ValidationError
+from django.contrib.auth import authenticate
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.serializers import (ModelSerializer, CharField)
+from rest_framework.serializers import (ModelSerializer,EmailField,Serializer,CharField)
 
 
 
 class AccountSerializer(ModelSerializer):
 	password = CharField(min_length=6, max_length=60)
+	current_account = None
 	class Meta:
 		model = Account
 		fields = ['name', 'phone', 'email', 'gender', 'password']
@@ -49,6 +51,7 @@ class AccountSerializer(ModelSerializer):
 		else:
 			self._validate_phone(phone)
 			self._validate_email(email)
+		return data
 
 
 	def create(self, validated_data):
@@ -65,8 +68,44 @@ class AccountSerializer(ModelSerializer):
 
 
 	def update(self, validated_data):
-		pass
+		self.current_account.name = validated_data.get('name')
+		self.current_account.phone = validated_data.get('phone')
+		self.current_account.email = validated_data.get('email')
+		self.current_account.gender = validated_data.get('gender')
+		self.current_account.save()
+		return self.current_account
 
+
+
+
+class LogSerializer(Serializer):
+	password = CharField(min_length=6, max_length=60)
+	email = EmailField()
+
+
+	def validate_email(self, value):
+		account = Account.objects.filter(email__iexact=value).first()
+		if account:
+			return value
+		raise ValidationError("account with this email doesn't exists")
+
+
+	def validate(self, data):
+		email = data.get('email')
+		password = data.get('password')
+
+		user = authenticate(email=email, password=password)
+		if user:
+			self._user = user
+			return data
+		else:
+			raise ValidationError("authentication failed")
+
+	def get_user(self):
+		if self._user:
+			return self._user
+		return None
+	
 
 
 class ProfileSerializer(ModelSerializer):
