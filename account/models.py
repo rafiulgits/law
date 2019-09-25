@@ -3,7 +3,9 @@ from django.contrib.auth.models import (
 	_user_has_module_perms, _user_has_perm, _user_get_all_permissions)
 
 from django.contrib.auth import get_backends
+from django.contrib.postgres.fields import JSONField
 from django.db import models
+
 
 
 _GENDER = (
@@ -106,3 +108,4 @@ class Profile(models.Model):
 	institute = models.CharField(max_length=250)
 	bar = models.CharField(max_length=250)
 	session = models.PositiveIntegerField(default=0)
+	meta = JSONField(default=dict)

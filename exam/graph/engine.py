@@ -111,6 +111,10 @@ class Query:
                       question
                       answer
                       summary
+                      option1
+                      option2
+                      option3
+                      option4
                     }}
                     answer
                     correct
