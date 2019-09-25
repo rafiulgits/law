@@ -1,6 +1,6 @@
 from django.shortcuts import HttpResponse
 
-from exam.serializers import (MCQExamSerializer, MCQExamCloneSerializer)
+from exam.serializers import (MCQExamSerializer, MCQExamCloneSerializer, ReportGeneratorSerializer)
 from exam.graph.engine import  Query
 
 from rest_framework.views import APIView
@@ -56,4 +56,19 @@ class MCQExam(APIView):
 		else:
 			print("Invalid")
 			print(serializer.errors)
+		return HttpResponse(serializer.errors, status=400)
+
+
+
+
+class MCQReport(APIView):
+	permission_classes = (IsAuthenticated,)
+
+	def post(self, request):
+		serializer = ReportGeneratorSerializer(data=request.data)
+		serializer.set_current_user(request.user)
+		if serializer.is_valid():
+			exam = serializer.create(serializer.validated_data)
+			result = Query.mcq_exam_report(exam.uid)
+			return HttpResponse(result, content_type='application/json')
 		return HttpResponse(serializer.errors, status=400)

@@ -1,10 +1,10 @@
-from blog.models import Folder, MCQTag
+from blog.models import Folder, MCQTag, MCQ
 from django.core.exceptions import ValidationError, PermissionDenied
 from exam import models
 from json import dumps as to_json
 import random
 from rest_framework.serializers import (ModelSerializer,IntegerField, 
-	CharField, ListField)
+	CharField, ListField, DictField)
 
 
 
@@ -158,5 +158,73 @@ class MCQExamCloneSerializer(ModelSerializer):
 				created_by=created_by,
 				is_clone=True
 			)
+
+		return exam
+
+
+
+
+class OMRSerializer(ModelSerializer):
+	class Meta:
+		model = models.OMR
+		fields = ['mcq', 'answer']	
+
+
+class ReportGeneratorSerializer(ModelSerializer):
+	omr = OMRSerializer(many=True)
+	class Meta:
+		model = models.MCQReport
+		fields = ['user', 'exam', "omr"]
+
+
+	def set_current_user(self, user):
+		self.current_user = user
+
+
+	def validate(self, data):
+		user = data.get('user')
+		if user != self.current_user:
+			raise PermissionDenied("access denied")
+
+		# check the exam has user right or not
+		exam = data.get('exam')
+		if exam.created_by != user:
+			raise PermissionDenied("access denied")
+
+		return data
+
+
+	def create(self, validated_data):
+		user = validated_data.get("user")
+		exam = validated_data.get("exam")
+
+		report = models.MCQReport.objects.create(exam=exam, user=user)
+		omr_sheet = validated_data.get("omr")
+		total_correct = 0
+		total_wrong = 0
+		total_blank = 0
+
+		for item in omr_sheet:
+			omr = models.OMR(
+				mcq=item.get('mcq'),
+				answer=item.get('answer'),
+				report=report
+				)
+			if item.get('mcq').answer == item.get('answer'):
+				omr.correct = True
+				total_correct = total_correct + 1
+			else:
+				omr.correct = False
+				total_wrong = total_wrong + 1
+				if item.get('answer') == 0:
+					total_blank = total_blank + 1
+			omr.save()
+
+
+		report.total_wrong = total_wrong
+		report.total_correct = total_correct
+		report.total_blank = total_blank
+		report.result = total_correct
+		report.save()
 
 		return exam

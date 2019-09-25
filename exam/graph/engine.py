@@ -80,3 +80,45 @@ class Query:
         }}
       """.format(uid)
       return execute(query)
+
+
+    def mcq_exam_report(exam_uid):
+      query = """
+        query {{
+          mcqExam(uid: {} ) {{
+            name
+            isClone
+            isPublic
+            createdBy {{
+              id
+              name
+            }}
+            source {{
+              duration
+            }}
+            mcqreport {{
+              uid
+              dateTime
+              totalCorrect
+              totalWrong
+              totalBlank
+              result
+              omrSet {{
+                edges {{
+                  node {{
+                    mcq {{
+                      uid
+                      question
+                      answer
+                      summary
+                    }}
+                    answer
+                    correct
+                  }}
+                }}
+              }}
+            }}
+          }}
+        }}
+      """.format(exam_uid)
+      return execute(query)
