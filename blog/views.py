@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from blog.models import Category
 
 from rest_framework.views import APIView
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound, ValidationError,PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -32,6 +32,8 @@ class FolderManager(APIView):
 		return HttpResponse(result, content_type='application/json')
 
 	def post(self, request):
+		if not request.user.is_staff:
+			raise PermissionDenied("access denied")
 		serializer = FolderSerializer(data=request.POST)
 		if serializer.is_valid():
 			result = Create.folder(serializer.validated_data)
@@ -39,6 +41,8 @@ class FolderManager(APIView):
 		raise ValidationError(serializer.errors)
 
 	def delete(self, request):
+		if not request.user.is_staff:
+			PermissionDenied("access denied")
 		if request.POST.get('self_loc_uid', None) is None:
 			raise ValidationError('folder self location required')
 		result = Delete.folder(request.POST)
@@ -60,6 +64,8 @@ class PostManager(APIView):
 			return HttpResponse(result, content_type='application/json')
 
 	def post(self, request):
+		if not request.user.is_staff:
+			PermissionDenied("access denied")
 		serializer = PostSerializer(data=request.POST)
 		if serializer.is_valid():
 			result = Create.post(serializer.validated_data)
@@ -67,6 +73,8 @@ class PostManager(APIView):
 		raise ValidationError(serializer.errors)
 
 	def delete(self, request):
+		if not request.user.is_staff:
+			PermissionDenied("access denied")
 		if request.POST.get('post_uid', None) is None:
 			raise ValidationError('post UID required')
 		result = Delete.post(request.POST)
@@ -79,6 +87,8 @@ class CreateMCQ(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def post(self, request):
+		if not request.user.is_staff:
+			PermissionDenied("access denied")
 		serializer = MCQSerializer(data=request.POST)
 		if serializer.is_valid():
 			result = Create.mcq(serializer.validated_data)
@@ -108,6 +118,8 @@ class MCQTagManager(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def post(self, request):
+		if not request.user.is_staff:
+			PermissionDenied("access denied")
 		serializer = MCQTagSerializer(data=request.POST)
 		if serializer.is_valid():
 			result = Create.mcq_tag(serializer.validated_data)
@@ -116,6 +128,8 @@ class MCQTagManager(APIView):
 
 
 	def delete(self, request):
+		if not request.user.is_staff:
+			PermissionDenied("access denied")
 		if request.POST.get('mcq_tag_uid', None) is None:
 			raise ValidationError('mcq tag uid is required')
 		result = Delete.mcq_tag(request.POST)
