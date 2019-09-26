@@ -1,4 +1,3 @@
-from account.forms import ProfileUpdateForm
 from account.graph.engine import Query
 from account.serializers import ProfileSerializer
 

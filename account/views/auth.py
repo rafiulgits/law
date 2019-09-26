@@ -1,6 +1,5 @@
-from account.forms import SignupForm, SigninForm
-from account.serializers import ProfileSerializer
-
+from account.serializers import (ProfileSerializer,LogSerializer,
+AccountSerializer)
 
 from rest_framework.exceptions import NotFound,NotAcceptable
 from rest_framework.permissions import IsAuthenticated
@@ -16,10 +15,9 @@ class SignIn(APIView):
 	renderer_classes = (JSONRenderer,)
 
 	def post(self, request, format=None):
-
-		form = SigninForm(request.POST)
-		if form.is_valid():
-			user = form.user
+		serializer = LogSerializer(data=request.POST)
+		if serializer.is_valid():
+			user = serializer.get_user()
 			token = RefreshToken.for_user(user)
 			data = {
 				'refresh' : str(token),
@@ -27,18 +25,17 @@ class SignIn(APIView):
 			}
 			return Response(data)
 		else:
-			raise NotFound({
-				'errors' : form.errors
-			})
+			print(serializer.errors)
+			raise NotFound({'errors':'Authentication failed'})
 
 
 class SignUp(APIView):
 	renderer_classes = (JSONRenderer, )
 
 	def post(self, request, format=None):
-		form = SignupForm(request.POST)
-		if form.is_valid():
-			user = form.save()
+		serializer = AccountSerializer(data=request.POST)
+		if serializer.is_valid():
+			user = serializer.create(serializer.validated_data)
 			token = RefreshToken.for_user(user)
 			data = {
 				'refresh' : str(token),
@@ -46,6 +43,7 @@ class SignUp(APIView):
 			}
 			return Response(data)
 		else:
+			print(serializer.errors)
 			raise NotAcceptable({
-				'errors' : form.errors
+				'errors' : "failed"
 			})

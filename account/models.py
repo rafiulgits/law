@@ -3,7 +3,9 @@ from django.contrib.auth.models import (
 	_user_has_module_perms, _user_has_perm, _user_get_all_permissions)
 
 from django.contrib.auth import get_backends
+from django.contrib.postgres.fields import JSONField
 from django.db import models
+
 
 
 _GENDER = (
@@ -76,8 +78,8 @@ class Account(AbstractBaseUser,PermissionsMixin):
 
 	objects = UserManager()
 
-	USERNAME_FIELD = 'phone'
-	REQUIRED_FIELDS = ['name','email',]
+	USERNAME_FIELD = 'email'
+	REQUIRED_FIELDS = ['name','phone',]
 
 
 	def has_perm(self, perm, obj=None):
