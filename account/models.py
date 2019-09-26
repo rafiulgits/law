@@ -108,4 +108,3 @@ class Profile(models.Model):
 	institute = models.CharField(max_length=250)
 	bar = models.CharField(max_length=250)
 	session = models.PositiveIntegerField(default=0)
-	meta = JSONField(default=dict)
