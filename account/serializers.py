@@ -111,7 +111,7 @@ class LogSerializer(Serializer):
 class ProfileSerializer(ModelSerializer):
 	class Meta:
 		model = Profile
-		fields = ['account','institute', 'bar', 'session', 'meta']
+		fields = ['account','institute', 'bar', 'session']
 
 
 	def set_current_user(self, user):
@@ -134,10 +134,6 @@ class ProfileSerializer(ModelSerializer):
 		session = validated_data.get('session')
 		if session:
 			profile.session = session
-
-		meta = validated_data['meta']
-		if meta:
-			profile.meta = validated_data.get('meta')
 
 		profile.save()
 		return profile
