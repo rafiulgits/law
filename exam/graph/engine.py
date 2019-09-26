@@ -83,24 +83,32 @@ class Query:
                 id
                 name
               }}
-              mcqexamitemSet {{
+            }}
+            mcqreport {{
+              uid
+              dateTime
+              totalCorrect
+              totalWrong
+              totalBlank
+              result
+              omrSet {{
                 edges {{
                   node {{
                     mcq {{
-                      id
                       uid
                       question
+                      answer
+                      summary
                       option1
                       option2
                       option3
                       option4
                     }}
+                    answer
+                    correct
                   }}
                 }}
               }}
-            }}
-            mcqreport {{
-              uid
             }}
           }}
         }}
