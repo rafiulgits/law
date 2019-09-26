@@ -83,6 +83,21 @@ class Query:
                 id
                 name
               }}
+              mcqexamitemSet {{
+                edges {{
+                  node {{
+                    mcq {{
+                      id
+                      uid
+                      question
+                      option1
+                      option2
+                      option3
+                      option4
+                    }}
+                  }}
+                }}
+              }}
             }}
             mcqreport {{
               uid
