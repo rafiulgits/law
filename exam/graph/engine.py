@@ -1,13 +1,9 @@
 from law.graphql import execute
 
 
-
 class Query:
     def all_mcq_exams(**kwargs):
         query_filter = "isPublic:true"
-        # user_id = kwargs.get('user_id', None)
-        # if user_id:
-        #   query_filter = """{}, createdBy:{}""".format(query_filter, user_id)
         query = """
             query {{
               allMcqExams( {} ) {{
@@ -36,6 +32,29 @@ class Query:
             }}
         """.format(query_filter)
         return execute(query)
+
+
+    def user_mcq_exams(user_id):
+      query = """
+        query {{
+          allMcqExams(createdBy: {} ){{
+            edges {{
+              node {{
+                uid
+                name
+                dateTime
+                source {{
+                  totalMcq
+                }}
+                mcqreport {{
+                  totalCorrect
+                }}
+              }}
+            }}
+          }}
+        }}
+      """.format(user_id)
+      return execute(query)
 
 
     def mcq_exam(uid):
