@@ -16,6 +16,7 @@ class Query:
                     isPublic
                     dateTime
                     createdBy {{
+                      id
                       name
                     }}
                     source {{
@@ -23,6 +24,7 @@ class Query:
                       duration
                       dateTime
                       createdBy {{
+                        id
                         name
                       }}
                     }}
@@ -67,6 +69,7 @@ class Query:
             isClone
             isPublic
             createdBy {{
+              id
               name
             }}
             source {{
@@ -77,6 +80,7 @@ class Query:
               dateTime
               totalMcq
               createdBy {{
+                id
                 name
               }}
               mcqexamitemSet {{
@@ -94,6 +98,9 @@ class Query:
                   }}
                 }}
               }}
+            }}
+            mcqreport {{
+              uid
             }}
           }}
         }}
