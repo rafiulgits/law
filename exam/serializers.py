@@ -113,14 +113,11 @@ class MCQExamSerializer(ModelSerializer):
 
 
 def combination(n, total):
-    if n == 1:
-    	return [total]
-
-    minimum = int(total/(n*2))
-    maximum = int(total/2)
-    dividers = sorted(random.sample(range(minimum, maximum), n))
-    return dividers
-    # return [a - b for a, b in zip(dividers + [total], [0] + dividers)]
+	"""
+	REF: https://stackoverflow.com/questions/3589214#3590105
+	"""
+	dividers = sorted(random.sample(range(1, total), n-1))
+	return [a - b for a, b in zip(dividers + [total], [0] + dividers)]
 
 
 
