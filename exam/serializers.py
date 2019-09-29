@@ -67,7 +67,11 @@ class MCQExamSerializer(ModelSerializer):
 		public = validated_data.get('public')
 		created_by = validated_data.get('created_by')
 
-		folder_combination = combination(len(subjects), total_mcq)
+		if len(subjects) == 7:
+			folder_combination = self._full_model_exam_combination(self.folder_list)
+		else:
+			folder_combination = combination(len(subjects), total_mcq)
+
 		statistics = self._make_statistics(self.folder_list, folder_combination)
 
 		exam_source = models.MCQExamSource.objects.create(
@@ -84,6 +88,50 @@ class MCQExamSerializer(ModelSerializer):
 			is_public=public, created_by=created_by)
 
 		return exam
+
+
+
+
+	def _full_model_exam_combination(self, folder_list):
+		distribution = [
+			{
+				'name' : 'The Bangladesh Legal Practioners and Bar Council Order 1972',
+				'questions' :  5
+			},
+			{
+				'name' : 'The Specific Relief Act 1877',
+				'questions' :  10
+			},
+			{
+				'name' : 'The Limitation Act 1908',
+				'questions' :  10
+			},
+			{
+				'name' : 'The Evidence Act 1872',
+				'questions' :  15
+			},
+			{
+				'name' : 'The Penal Code 1860',
+				'questions' :  20
+			},
+			{
+				'name' : 'The Code of Criminal  Procedure 1898',
+				'questions' :  20
+			},
+			{
+				'name' : 'Code of Civil Procedure 1908',
+				'questions' :  20
+			}
+		]
+
+		folder_combination = []
+		for folder in folder_list:
+			for item in distribution:
+				if item['name'] in folder.name:
+					folder_combination.append(item['questions'])
+		return folder_combination
+
+
 
 
 
@@ -118,6 +166,8 @@ def combination(n, total):
 	"""
 	dividers = sorted(random.sample(range(1, total), n-1))
 	return [a - b for a, b in zip(dividers + [total], [0] + dividers)]
+
+
 
 
 
