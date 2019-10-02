@@ -9,4 +9,7 @@ urlpatterns = [
 	path('signin/', auth.SignIn.as_view(), name='signin'),
 	path('access-renew/', TokenRefreshView.as_view(), name='access-renew'),
 	path('profile/', manage.Profile.as_view(), name='user-profile'),
+	path('update/', auth.AccountUpdate.as_view()),
+	path('password-change/', auth.PasswordChange.as_view()),
+	path('verify/<token>/', auth.VerifyEmail.as_view()),
 ]

@@ -1,5 +1,6 @@
 from account.graph.engine import Query
-from account.serializers import ProfileSerializer
+from account.serializers import ProfileSerializer, ProfileUpdateSerializer
+from account.models import Profile as ProfileModel
 
 from django.shortcuts import HttpResponse
 
@@ -23,3 +24,17 @@ class Profile(APIView):
 			result = Query.profile(profile.account.id)
 			return HttpResponse(result, content_type='application/json')
 		return HttpResponse(serializer.errors, status=400)
+
+
+	def put(self, request, format=None):
+		profile = ProfileModel.objects.get(account=request.user)
+		serializer = ProfileUpdateSerializer(
+			profile=profile, 
+			account=request.user, 
+			data=request.POST)
+		if serializer.is_valid():
+			profile = serializer.update(serializer.validated_data)
+			result = Query.profile(profile.account.id)
+			return HttpResponse(result, content_type='application/json')
+		else:
+			raise HttpResponse(serializer.errors, content_type='application/json', status=400)
