@@ -60,3 +60,5 @@ class OMR(models.Model):
 	answer = models.PositiveIntegerField(validators=[MaxValueValidator(4),MinValueValidator(0)])
 	correct = models.BooleanField()
 	report = models.ForeignKey(MCQReport, on_delete=models.SET_NULL,null=True)
+
+
