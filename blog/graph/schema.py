@@ -31,6 +31,9 @@ class Query(graphene.ObjectType):
 
 	all_cqs = graphene.List(types.CQType)
 
+	all_mcq_issues = DjangoFilterConnectionField(types.MCQIssueType)
+	mcq_issue = graphene.Field(types.MCQIssueType, uid=graphene.ID() )
+
 	def resolve_post(self, info, **kwargs):
 		uid = kwargs.get('uid')
 		post = Post.objects.get(uid=uid)
@@ -69,6 +72,17 @@ class Query(graphene.ObjectType):
 
 	def resoleve_all_cqs(self, info, **kwargs):
 		return CQ.objects.all()
+
+
+	def resolve_mcq_issue(self, info, **kwargs):
+		uid = kwargs.get('uid', None)
+		if uid is None:
+			raise ValueError("UID must be provided")
+		try:
+			obj = MCQIssue.objects.get(uid=uid)
+			return obj
+		except ObjectDoesNotExist:
+			return None
 
 
 

@@ -63,3 +63,12 @@ class Article(APIView):
             return HttpResponse({"res" : "OK"}, content_type="application/json")
         except ObjectDoesNotExist:
             return NotFound("required a valid UID")
+
+
+
+class AllArticles(APIView):
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request):
+        result = Query.all_articles()
+        return HttpResponse(result, content_type="application/json")

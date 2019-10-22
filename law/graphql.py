@@ -9,7 +9,7 @@ from draft.graph.schema import Query as DraftQuery
 
 from graphene import ObjectType, Schema as _SCHEMA
 
-class Query(AccountQuery, BlogQuery, ExamQuery, DraftQuery, ObjectType):
+class Query(AccountQuery, BlogQuery, ExamQuery, DraftQuery,  ObjectType):
 	pass
 
 class Mutation(BlogMutation, ObjectType):

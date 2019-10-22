@@ -82,3 +82,16 @@ class CQTagType(DjangoObjectType):
 			'folder' : ['exact']
 		}
 		interfaces = (relay.Node,)
+
+
+
+class MCQIssueType(DjangoObjectType):
+	class Meta:
+		model = models.MCQIssue
+		filter_fields = {
+			'uid' : ['exact'],
+			'user__id' : ['exact'],
+			'mcq__uid' : ['exact'],
+			'is_solved' : ['exact']
+		}
+		interfaces = (relay.Node,)

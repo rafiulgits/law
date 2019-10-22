@@ -15,3 +15,29 @@ class Query:
             }}
         """.format(uid)
         return execute(query)
+
+    
+    def all_articles(after=None, before=None):
+        filter = "first:20"
+        if after:
+            filter = '{} after="{}"'.format(filter, after)
+        query = """
+            query {{
+                allArticle({}) {{
+                    pageInfo {{
+                    startCursor
+                    endCursor
+                    hasNextPage
+                    hasPreviousPage
+                    }}
+                    edges {{
+                        node {{
+                            id
+                            uid
+                            title
+                        }}
+                    }}
+                }}
+            }}
+        """.format(filter)
+        return execute(query)

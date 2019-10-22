@@ -27,7 +27,8 @@ urlpatterns = [
     path('api/account/', include('account.urls')),
     path('api/blog/', include('blog.urls')),
     path('api/exam/', include('exam.urls')),
-    path('api/draft', include('draft.urls'))
+    path('api/draft/', include('draft.urls')),
+    path('api/cpanel/', include('cpanel.urls'))
 ]
 
 if settings.DEBUG:
