@@ -4,7 +4,7 @@ from blog.serializers import (PostSerializer, FolderSerializer, MCQSerializer,
 from django.shortcuts import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from blog.models import Category
+from blog.models import Category, MCQIssue
 
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, ValidationError,PermissionDenied
@@ -142,10 +142,32 @@ class MCQTagManager(APIView):
 class MCQIssueManager(APIView):
 	permission_classes = (IsAuthenticated, )
 
+	def get(self, request):
+		uid = request.GET.get('uid', None)
+		if not uid:
+			raise NotFound("must provide a UID")
+		result = Query.get_issue(uid)
+		return HttpResponse(result, content_type='application/json')
+
+
 	def post(self, request):
-		serializer = MCQIssueSerializer(data=request.POST)
-		serializer.set_current_user(request.user)
+		serializer = MCQIssueSerializer(data=request.POST,user=request.user)
 		if serializer.is_valid():
 			mcq_issue = serializer.create(serializer.validated_data)
 			return HttpResponse('{"response": "ok"}', content_type='application/json')
 		return HttpResponse(serializer.errors, status=400)
+
+
+	def put(self, request):
+		uid = request.GET.get('uid', None)
+		if not uid:
+			raise NotFound("must provide a UID")
+		try:
+			issue = MCQIssue.objects.get(uid=uid)
+			if not issue.is_solved:
+				issue.is_solved = True
+				issue.save()
+			result = Query.get_issue(issue.uid)
+			return HttpResponse(result, content_type='application/json')
+		except ObjectDoesNotExist:
+			raise NotFound("issue not found")

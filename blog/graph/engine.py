@@ -206,6 +206,22 @@ class Query():
 		return execute(query)
 
 
+	def get_issue(uid):
+		query = """
+			query {{
+			  mcqIssue(uid: {} ){{
+			    id
+			    uid
+			    body
+			    isSolved
+			    user {{
+			      id
+			      name
+			    }}
+			  }}
+			}}
+		""".format(uid)
+		return execute(query)
 
 
 class Update():

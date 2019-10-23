@@ -46,23 +46,22 @@ class MCQTagSerializer(ModelSerializer):
 class MCQIssueSerializer(ModelSerializer):
 	class Meta:
 		model = MCQIssue
-		fields = ['user','mcq','body']
+		fields = ['mcq','body']
 
 
-	def set_current_user(self, user):
-		self.current_user = user
+	def __init__(self, *args, **kwargs):
+		user = kwargs.pop("user")
+		super(MCQIssueSerializer, self).__init__(*args, **kwargs)
+		self.user = user
 
 
 	def validate(self, data):
-		user = data.get('user')
-		if user != self.current_user:
-			raise PermissionDenied("access denied")
 		return data
 
 
 	def create(self, validated_data):
 		mcq_issue = MCQIssue.objects.create(
-			user=validated_data.get('user'),
+			user=self.user,
 			mcq=validated_data.get('mcq'),
 			body=validated_data.get('body')
 		)
