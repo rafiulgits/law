@@ -68,7 +68,7 @@ class Article(APIView):
 
 class AllArticles(APIView):
     permission_classes = (IsAuthenticated,)
-    
+
     def get(self, request):
         result = Query.all_articles()
         return HttpResponse(result, content_type="application/json")

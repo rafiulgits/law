@@ -1,10 +1,11 @@
 from blog.graph.engine import Query, Create, Update, Delete
+from blog.models import Category, MCQIssue
 from blog.serializers import (PostSerializer, FolderSerializer, MCQSerializer, 
 	MCQTagSerializer, MCQIssueSerializer)
 from django.shortcuts import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from blog.models import Category, MCQIssue
+from generic.permissions import IsStaffUser
 
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, ValidationError,PermissionDenied
@@ -139,16 +140,8 @@ class MCQTagManager(APIView):
 
 
 
-class MCQIssueManager(APIView):
+class MCQIssueCreate(APIView):
 	permission_classes = (IsAuthenticated, )
-
-	def get(self, request):
-		uid = request.GET.get('uid', None)
-		if not uid:
-			raise NotFound("must provide a UID")
-		result = Query.get_issue(uid)
-		return HttpResponse(result, content_type='application/json')
-
 
 	def post(self, request):
 		serializer = MCQIssueSerializer(data=request.POST,user=request.user)
@@ -158,10 +151,18 @@ class MCQIssueManager(APIView):
 		return HttpResponse(serializer.errors, status=400)
 
 
-	def put(self, request):
-		uid = request.GET.get('uid', None)
-		if not uid:
-			raise NotFound("must provide a UID")
+
+
+class MCQIssueManager(APIView):
+
+	permission_classes = (IsAuthenticated, IsStaffUser)
+
+	def get(self, request, uid):
+		result = Query.get_issue(uid)
+		return HttpResponse(result, content_type='application/json')
+
+
+	def put(self, request, uid):
 		try:
 			issue = MCQIssue.objects.get(uid=uid)
 			if not issue.is_solved:
