@@ -30,7 +30,9 @@ class FolderType(DjangoObjectType):
 			'category' : ['exact'],
 			'category__name' : ['exact', 'icontains'],
 			'self_loc' : ['exact'],
-			'root_loc': ['exact']
+			'self_loc__uid' : ['exact'],
+			'root_loc': ['exact'],
+			'root_loc__uid': ['exact']
 		}
 		interfaces = (relay.Node, )
 

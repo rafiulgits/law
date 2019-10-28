@@ -65,24 +65,17 @@ class AccountSerializer(ModelSerializer):
 		return account
 
 
+
 class AccountUpdateSerializer(Serializer):
 	phone = CharField(max_length=12)
 	name = CharField(max_length=80)
 	email = EmailField(max_length=120)
 	gender = CharField(max_length=1)
-	password = CharField(min_length=6)
 
 	def __init__(self, *args, **kwargs):
 		account = kwargs.pop('account')
 		super(AccountUpdateSerializer, self).__init__(*args, **kwargs)
 		self.account = account
-
-
-	def _validate_password(self, password):
-		valid = self.account.check_password(password)
-		if not valid:
-			raise ValidationError("incorrect password")
-		return password
 
 
 	def _validate_phone(self, phone):
@@ -110,11 +103,11 @@ class AccountUpdateSerializer(Serializer):
 	def validate(self, data):
 		phone = data.get('phone')
 		email = data.get('email')
-		password = data.get('password')
+		gender = data.get('gender')
 
 		self._validate_phone(phone)
 		self._validate_email(email)
-		self._validate_password(password)
+		self._validate_gender(gender)
 
 		return data
 
@@ -127,6 +120,7 @@ class AccountUpdateSerializer(Serializer):
 		if commit:
 			self.account.save()
 		return self.account
+
 
 
 class LogSerializer(Serializer):
@@ -154,6 +148,7 @@ class LogSerializer(Serializer):
 		if self._user:
 			return self._user
 		return None
+
 
 
 class ProfileSerializer(ModelSerializer):
@@ -188,6 +183,7 @@ class ProfileSerializer(ModelSerializer):
 		return profile
 
 
+
 class ProfileUpdateSerializer(Serializer):
 	account = IntegerField()
 	institute = CharField(max_length=250)
@@ -219,6 +215,7 @@ class ProfileUpdateSerializer(Serializer):
 		self.profile.session = validated_data.get('session')
 		self.profile.save()
 		return self.profile
+
 
 
 class PasswordChangeSerializer(Serializer):

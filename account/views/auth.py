@@ -75,7 +75,7 @@ class AccountUpdate(APIView):
 		serializer = AccountUpdateSerializer(account=request.user, data=request.POST)
 		if serializer.is_valid():
 			account = serializer.save(serializer.validated_data, True)
-			return Response('{"res": "ok"}')
+			return Response({"res": "ok"})
 		else:
 			raise ValidationError(serializer.errors)
 

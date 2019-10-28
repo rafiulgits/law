@@ -1,5 +1,5 @@
-from blog.graph.engine import Query, Create, Update, Delete
-from blog.models import Category, MCQIssue
+from blog.graph.engine import Query
+from blog.models import Category, MCQIssue, Post, Folder
 from blog.serializers import (PostSerializer, FolderSerializer, MCQSerializer, 
 	MCQTagSerializer, MCQIssueSerializer)
 from django.shortcuts import HttpResponse
@@ -29,7 +29,7 @@ class FolderManager(APIView):
 		location = request.GET.get('location', None)
 		if location is None:
 			raise NotFound('location have to be provided')
-		result = Query.explore_folder(location)
+		result = Query.explore_folder(rootLoc=location)
 		return HttpResponse(result, content_type='application/json')
 
 	def post(self, request):
@@ -37,17 +37,42 @@ class FolderManager(APIView):
 			raise PermissionDenied("access denied")
 		serializer = FolderSerializer(data=request.POST)
 		if serializer.is_valid():
-			result = Create.folder(serializer.validated_data)
+			folder = serializer.create(serializer.validated_data)
+			result = Query.explore_folder(rootLocUid=folder.self_loc_id)
 			return HttpResponse(result, content_type='application/json')
 		raise ValidationError(serializer.errors)
+
+
+	def put(self, request):
+		if not request.user.is_staff:
+			PermissionDenied("access denied")
+		self_loc_uid = request.GET.get('self_loc_uid', None)
+		if not self_loc_uid:
+			raise ValidationError('folder self location required')
+		try:
+			folder = Folder.objects.get(self_loc_id=self_loc_uid)
+			serializer = FolderSerializer(data=request.POST, instance=folder)
+			if serializer.is_valid():
+				folder = serializer.update(serializer.validated_data)
+				result = Query.explore_folder(rootLocUid=folder.self_loc_id)
+				return HttpResponse(result, content_type='application/json')
+		except ObjectDoesNotExist:
+			raise NotFound({"folder":"invalid folder UID"})
+
 
 	def delete(self, request):
 		if not request.user.is_staff:
 			PermissionDenied("access denied")
-		if request.POST.get('self_loc_uid', None) is None:
+		self_loc_uid = request.GET.get('self_loc_uid', None)
+		if not self_loc_uid:
 			raise ValidationError('folder self location required')
-		result = Delete.folder(request.POST)
-		return HttpResponse(result, content_type='application/json')
+		try:
+			folder = Folder.objects.get(self_loc_id=self_loc_uid)
+			result = Query.explore_folder(rootLocUid=folder.self_loc_id)
+			folder.delete()
+			return HttpResponse(result, content_type='application/json')
+		except ObjectDoesNotExist:
+			raise NotFound({"folder":"folder against this UID not found"})
 
 
 
@@ -66,20 +91,47 @@ class PostManager(APIView):
 
 	def post(self, request):
 		if not request.user.is_staff:
-			PermissionDenied("access denied")
-		serializer = PostSerializer(data=request.POST)
+			raise PermissionDenied("access denied")
+		serializer = PostSerializer(data=request.POST, user=request.user)
 		if serializer.is_valid():
-			result = Create.post(serializer.validated_data)
+			post = serializer.create(serializer.validated_data)
+			result = Query.get_post(post.uid)
 			return HttpResponse(result, content_type='application/json')
 		raise ValidationError(serializer.errors)
 
+
+	def put(self, request):
+		if not request.user.is_staff:
+			raise PermissionDenied("access denied")
+		uid = request.GET.get('uid', None)
+		if not uid:
+			raise NotFound("post uid is required")
+		try:
+			post = Post.objects.get(uid=uid)
+			serializer = PostSerializer(data=request.POST,
+				instance=post,user=request.user)
+			if serializer.is_valid():
+				post = serializer.update(serializer.validated_data)
+				result = Query.get_post(post.uid)
+				return HttpResponse(result, content_type='application/json')
+			raise ValidationError(serializer.errors)
+		except ObjectDoesNotExist:
+			raise NotFound("invalid post uid")
+
+
 	def delete(self, request):
 		if not request.user.is_staff:
-			PermissionDenied("access denied")
-		if request.POST.get('post_uid', None) is None:
-			raise ValidationError('post UID required')
-		result = Delete.post(request.POST)
-		return HttpResponse(result, content_type='application/json')
+			raise PermissionDenied("access denied")
+		uid = request.GET.get('uid', None)
+		if not uid:
+			raise NotFound("post uid is required")
+		try:
+			post = Post.objects.get(uid=uid)
+			result = Query.get_post(post.uid)
+			post.delete()
+			return HttpResponse(result, content_type='application/json')
+		except ObjectDoesNotExist:
+			raise NotFound("post not found")
 
 
 
@@ -113,7 +165,6 @@ class MCQList(APIView):
 
 
 
-
 class MCQTagManager(APIView):
 
 	permission_classes = (IsAuthenticated,)
@@ -135,7 +186,6 @@ class MCQTagManager(APIView):
 			raise ValidationError('mcq tag uid is required')
 		result = Delete.mcq_tag(request.POST)
 		return HttpResponse(result, content_type='application/json')
-
 
 
 

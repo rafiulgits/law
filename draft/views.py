@@ -59,8 +59,9 @@ class Article(APIView):
             raise NotFound("required a UID")
         try:
             article = ArticleModel.objects.get(uid=uid)
+            result = Query.article(article.uid)
             article.delete()
-            return HttpResponse({"res" : "OK"}, content_type="application/json")
+            return HttpResponse(result, content_type="application/json")
         except ObjectDoesNotExist:
             return NotFound("required a valid UID")
 

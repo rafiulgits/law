@@ -43,6 +43,12 @@ class Query(graphene.ObjectType):
 		return Post.objects.all()
 
 	def resolve_all_folders(self, info, **kwargs):
+		self_loc_uid = kwargs.get('self_loc__uid', None)
+		root_loc_uid = kwargs.get('root_loc__uid', None)
+		if self_loc_uid:
+			return Folder.objects.filter(self_loc_id=self_loc_uid)
+		elif root_loc_uid:
+			return Folder.objects.filter(root_loc_id=root_loc_uid)
 		return Folder.objects.all()
 
 	def resolve_all_categories(self, info, **kwargs):
@@ -83,31 +89,3 @@ class Query(graphene.ObjectType):
 			return obj
 		except ObjectDoesNotExist:
 			return None
-
-
-
-class Mutation:
-	create_category = mutations.CreateCategory.Field()
-	delete_category = mutations.DeleteCategory.Field()
-
-	create_folder = mutations.CreateFolder.Field()
-	update_folder = mutations.UpdateFolder.Field()
-	delete_folder = mutations.DeleteFolder.Field()
-
-	create_post = mutations.CreatePost.Field()
-	update_post = mutations.UpdatePost.Field()
-	delete_post = mutations.DeletePost.Field()
-
-	create_mcq = mutations.CreateMCQ.Field()
-	update_mcq = mutations.UpdateMCQ.Field()
-	delete_mcq = mutations.DeleteMCQ.Field()
-
-	create_cq = mutations.CreateCQ.Field()
-	update_cq = mutations.UpdateCQ.Field()
-	delete_cq = mutations.DeleteCQ.Field()
-
-	create_mcq_tag = mutations.CreateMCQTag.Field()
-	delete_mcq_tag = mutations.DeleteMCQTag.Field()
-
-	create_cq_tag = mutations.CreateCQTag.Field()
-	delete_cq_tag = mutations.DeleteCQTag.Field()
