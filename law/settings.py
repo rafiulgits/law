@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'graphene_django', # GraphQL
     'corsheaders', # CORS Header : call api from same host
 
-    'account', 'blog', 'exam','draft'
+    'account', 'blog', 'exam','draft','cpanel'
 ]
 
 MIDDLEWARE = [

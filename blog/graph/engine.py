@@ -48,6 +48,11 @@ class Query():
 			    category {{
 			      name
 			    }}
+			    postSet {{
+		          uid
+		          title
+		          dateTime
+		        }}
 			  }}
 			  allFolders({}) {{
 			    edges {{
