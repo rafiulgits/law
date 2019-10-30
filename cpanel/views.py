@@ -1,6 +1,7 @@
 from account.models import Account
 from blog.models import MCQIssue
 from cpanel.graph.engine import Query
+from cpanel.models import SupportBox
 from cpanel.serializer import SupportBoxSerializer
 from django.shortcuts import HttpResponse
 from exam.models import MCQExam
@@ -45,12 +46,26 @@ class AllIssues(APIView):
 
 
 
+class AllSupportMessage(APIView):
+	permission_classes = (IsAuthenticated, IsStaffUser)
+
+	def get(self, request, page):
+		if page:
+			if page > 0:
+				offset = (page-1)*50
+				result = SupportBox.objects.all().order_by('-date_time')[offset:offset+50]
+				serializer = SupportBoxSerializer(result, many=True)
+				return Response(serializer.data)
+		result = SupportBox.objects.all().order_by('-date_time')[0:50]
+		serializer = SupportBoxSerializer(result, many=True)
+		return Response(serializer.data)
+
+
+
 
 
 
 class SupportBoxView(APIView):
-	permission_classes = (IsAuthenticated,)
-
 	def post(self, request):
 		serializer = SupportBoxSerializer(data=request.POST)
 		if serializer.is_valid():

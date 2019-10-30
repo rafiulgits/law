@@ -8,9 +8,9 @@ class SupportBoxSerializer(ModelSerializer):
 
 	def save(self):
 		supprt_box = SupportBox.objects.create(
-			name=self.validated_date.get('name'),
-			email=self.validated_date.get('email'),
-			subject=self.validated_date.get('subject'),
-			message=self.validated_date.get('message')
+			name=self.validated_data.get('name'),
+			email=self.validated_data.get('email'),
+			subject=self.validated_data.get('subject'),
+			message=self.validated_data.get('message')
 			)
 		return supprt_box
