@@ -29,7 +29,7 @@ class MCQExam(APIView):
 		uid = request.GET.get('uid', None)
 		if uid is None:
 			raise ValidationError("exam UID must be provided")
-		result = Query.mcq_exam(uid)
+		result = Query.mcq_exam_preview(uid)
 		return HttpResponse(result, content_type='application/json')
 
 
@@ -41,7 +41,7 @@ class MCQExam(APIView):
 		serializer.set_current_user(request.user)
 		if serializer.is_valid():
 			exam = serializer.create(serializer.validated_data)
-			result = Query.mcq_exam(exam.uid)
+			result = Query.mcq_exam_preview(exam.uid)
 			return HttpResponse(result, content_type='application/json')
 		return HttpResponse(serializer.errors, status=400)
 
@@ -54,13 +54,22 @@ class MCQExam(APIView):
 		serializer.set_current_user(request.user)
 		if serializer.is_valid():
 			exam = serializer.create(serializer.validated_data)
-			result = Query.mcq_exam(exam.uid)
+			result = Query.mcq_exam_preview(exam.uid)
 			return HttpResponse(result, content_type='application/json')
 		else:
 			print("Invalid")
 			print(serializer.errors)
 		return HttpResponse(serializer.errors, status=400)
 
+
+
+class MCQExamSheet(APIView):
+
+	permission_classes = (IsAuthenticated,)
+
+	def get(self,request, uid):
+		result = Query.mcq_exam(uid)
+		return HttpResponse(result, content_type='application/json')
 
 
 
@@ -86,10 +95,9 @@ class MCQReport(APIView):
 		serializer.set_current_user(request.user)
 		if serializer.is_valid():
 			exam = serializer.create(serializer.validated_data)
-			result = Query.mcq_exam_report(exam.uid)
+			result = Query.mcq_exam_preview(exam.uid)
 			return HttpResponse(result, content_type='application/json')
 		return HttpResponse(serializer.errors, status=400)
-
 
 
 

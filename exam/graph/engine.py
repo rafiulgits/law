@@ -2,6 +2,7 @@ from law.graphql import execute
 
 
 class Query:
+
     def all_mcq_exams(**kwargs):
         query_filter = "isPublic:true"
         query = """
@@ -59,30 +60,46 @@ class Query:
       return execute(query)
 
 
+    def mcq_exam_preview(uid):
+    	query = """
+			query {{
+			  mcqExam(uid: {} ) {{
+          uid
+			    name
+          isClone
+          isPublic
+          createdBy {{
+            id
+            name
+          }}
+			    source {{
+            id
+			      uid
+			      public
+			      statistics
+			      duration
+			      dateTime
+			      totalMcq
+			      createdBy {{
+			      	id
+			        name
+			      }}
+			    }}
+			    mcqreport {{
+           id
+			    }}
+			  }}
+			}}
+    	""".format(uid)
+    	return execute(query)
+
+
     def mcq_exam(uid):
       query = """
         query {{
           mcqExam(uid: {} ) {{
-            id
-            uid
-            name
-            isClone
-            isPublic
-            createdBy {{
-              id
-              name
-            }}
             source {{
-              id
-              uid
-              duration
-              statistics
-              dateTime
-              totalMcq
-              createdBy {{
-                id
-                name
-              }}
+            duration
               mcqexamitemSet {{
                 edges {{
                   node {{
@@ -95,32 +112,6 @@ class Query:
                       option3
                       option4
                     }}
-                  }}
-                }}
-              }}
-            }}
-            mcqreport {{
-              uid
-              dateTime
-              totalCorrect
-              totalWrong
-              totalBlank
-              result
-              omrSet {{
-                edges {{
-                  node {{
-                    mcq {{
-                      uid
-                      question
-                      answer
-                      summary
-                      option1
-                      option2
-                      option3
-                      option4
-                    }}
-                    answer
-                    correct
                   }}
                 }}
               }}
@@ -143,7 +134,17 @@ class Query:
               name
             }}
             source {{
+              id
+              uid
+              public
+              statistics
               duration
+              dateTime
+              totalMcq
+              createdBy {{
+                id
+                name
+              }}
             }}
             mcqreport {{
               uid
