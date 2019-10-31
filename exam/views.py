@@ -14,7 +14,7 @@ from rest_framework.exceptions import ValidationError, NotFound, PermissionDenie
 class PublicExamList(APIView):
 	permission_classes = (IsAuthenticated,)
 	def get(self, request):
-		result = Query.all_mcq_exams()
+		result = Query.all_mcq_exams(after=request.GET.get('after', None))
 		return HttpResponse(result, content_type='application/json')
 
 

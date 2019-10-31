@@ -4,10 +4,18 @@ from law.graphql import execute
 class Query:
 
     def all_mcq_exams(**kwargs):
-        query_filter = "isPublic:true"
+        query_filter = "isPublic:true, first:20"
+        if kwargs.get('after', None):
+          query_filter = '{} after:"{}"'.format(query_filter, kwargs.get('after'))
         query = """
             query {{
               allMcqExams( {} ) {{
+                pageInfo {{
+                  hasPreviousPage
+                  hasNextPage
+                  startCursor
+                  endCursor
+                }}
                 edges {{
                   node {{
                     id
@@ -48,6 +56,7 @@ class Query:
                 dateTime
                 source {{
                   totalMcq
+                  statistics
                 }}
                 mcqreport {{
                   totalCorrect

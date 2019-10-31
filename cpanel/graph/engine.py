@@ -20,7 +20,6 @@ class Query:
 		return execute(query)
 
 
-
 	def all_issues(before=None, after=None):
 		query = """
 			query{
@@ -48,4 +47,21 @@ class Query:
 			  }
 			}
 		"""
+		return execute(query)
+
+
+	def get_mcq(uid):
+		query = """
+			query {{
+			  mcq(uid: {}) {{
+			    question
+			    option1
+			    option2
+			    option3
+			    option4
+			    answer
+			    summary
+			  }}
+			}}
+		""".format(uid)
 		return execute(query)

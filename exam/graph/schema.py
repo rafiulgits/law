@@ -34,8 +34,8 @@ class Query(graphene.ObjectType):
 	def resolve_all_mcq_exams(self, info, **kwargs):
 		created_by = kwargs.get('created_by', None)
 		if created_by is not None:
-			return MCQExam.objects.filter(created_by_id=created_by)
-		return MCQExam.objects.all()
+			return MCQExam.objects.filter(created_by_id=created_by).order_by('-date_time')
+		return MCQExam.objects.all().order_by('-date_time')
 
 
 

@@ -8,4 +8,5 @@ urlpatterns = [
 	path('allsuportmessages/<int:page>/', views.AllSupportMessage.as_view()),
 	path('allusers/<int:page>/', views.AllUsers.as_view()),
 	path('allissues/', views.AllIssues.as_view()),
+	path('mcq-item/<int:uid>/', views.MCQManager.as_view())
 ]

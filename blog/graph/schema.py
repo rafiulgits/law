@@ -22,6 +22,7 @@ class Query(graphene.ObjectType):
 	path = graphene.relay.Node.Field(types.PathType)
 	all_paths = DjangoFilterConnectionField(types.PathType)
 
+	mcq = graphene.Field(types.MCQType, uid=graphene.Int())
 	all_mcqs = DjangoFilterConnectionField(types.MCQType)
 
 	mcq_tag = graphene.relay.Node.Field(types.MCQTagType)
@@ -56,6 +57,15 @@ class Query(graphene.ObjectType):
 
 	def resolve_all_paths(self, info, **kwargs):
 		return Path.objects.all()
+
+	def resolve_mcq(self, info, **kwargs):
+		uid = kwargs.get('uid', None)
+		if uid:
+			try:
+				return MCQ.objects.get(uid=uid)
+			except ObjectDoesNotExist:
+				pass
+		return None	
 
 	def resolve_all_mcqs(self, info, **kwargs):
 		return MCQ.objects.all()

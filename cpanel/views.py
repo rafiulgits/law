@@ -1,12 +1,13 @@
 from account.models import Account
-from blog.models import MCQIssue
+from blog.models import MCQIssue, MCQ
 from cpanel.graph.engine import Query
 from cpanel.models import SupportBox
-from cpanel.serializer import SupportBoxSerializer
+from cpanel.serializer import SupportBoxSerializer, MCQSerializer
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import HttpResponse
 from exam.models import MCQExam
 from generic.permissions import IsStaffUser
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -62,9 +63,6 @@ class AllSupportMessage(APIView):
 
 
 
-
-
-
 class SupportBoxView(APIView):
 	def post(self, request):
 		serializer = SupportBoxSerializer(data=request.POST)
@@ -72,3 +70,28 @@ class SupportBoxView(APIView):
 			serializer.save()
 			return HttpResponse({"message":"OK"}, content_type='application/json')
 		raise ValidationError(serializer.errors)
+
+
+
+
+
+class MCQManager(APIView):
+	
+	permission_classes = (IsAuthenticated, IsStaffUser,)
+
+	def get(self, request, uid):
+		result = Query.get_mcq(uid)
+		return HttpResponse(result, content_type='application/json')
+
+
+	def put(self, request, uid):
+		try:
+			instance = MCQ.objects.get(uid=uid)
+			serializer = MCQSerializer(data=request.POST, instance=instance)
+			if serializer.is_valid():
+				instance = serializer.save()
+				return HttpResponse({"res" : "OK"}, content_type='application/json')
+			else:
+				raise ValidationError(serializer.errors);
+		except ObjectDoesNotExist:
+			raise NotFound("item not found")

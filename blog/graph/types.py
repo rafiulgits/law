@@ -45,7 +45,9 @@ class PostType(DjangoObjectType):
 class MCQType(DjangoObjectType):
 	class Meta:
 		model = models.MCQ
-		filter_fields = {}
+		filter_fields = {
+			'uid' : ['exact']
+		}
 		interfaces = (relay.Node, )
 
 
