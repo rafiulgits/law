@@ -1,3 +1,6 @@
 from django.contrib import admin
+from draft.models import Pointer, Directory,Article
 
-# Register your models here.
+admin.site.register(Pointer)
+admin.site.register(Directory)
+admin.site.register(Article)

@@ -66,10 +66,6 @@ class Query():
 			          id
 					  uid
 			        }}
-			        postSet {{
-			          uid
-			          title
-			        }}
 			      }}
 			    }}
 			  }}
