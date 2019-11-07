@@ -68,7 +68,6 @@ class Query:
 		query = """
 		  query {{
 			article( uid:"{}" ) {{
-			  id
 			  uid
 			  title
 			  body

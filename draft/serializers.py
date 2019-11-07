@@ -48,7 +48,7 @@ class DirectorySerializer(ModelSerializer):
 class ArticleSerailizer(ModelSerializer):
     class Meta:
         model = Article
-        fields = ["title", "body", "directory"]
+        fields = ["title","label", "body", "directory"]
 
     def __init__(self, *args, **kwargs):
         article = kwargs.pop('article', None)
@@ -60,6 +60,7 @@ class ArticleSerailizer(ModelSerializer):
         article = Article(
             title=validated_data.get('title'),
             body=validated_data.get('body'),
+            label=validated_data.get('label'),
             directory=validated_data.get('directory')
             )
         article.save()
@@ -69,6 +70,7 @@ class ArticleSerailizer(ModelSerializer):
     def update(self, validated_data):
         self.article.title = validated_data.get('title')
         self.article.body = validated_data.get('body')
+        self.article.label = validated_data.get('label')
         self.article.directory = validated_data.get('directory')
         self.article.save()
         return self.article
