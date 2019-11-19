@@ -11,7 +11,7 @@ urlpatterns = [
 	path('profile/', manage.Profile.as_view()),
 	path('update/', auth.AccountUpdate.as_view()),
 	path('password-change/', auth.PasswordChange.as_view()),
-	path('verify/<token>/', auth.VerifyEmail.as_view()),
+	path('verify/', auth.VerifyEmail.as_view()),
 
 	path('password-reset/request/', auth.PasswordResetRequest.as_view()),
 	path('password-reset/verify/', auth.VerifyPasswordRequest.as_view()),

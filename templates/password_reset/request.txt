@@ -1,4 +1,4 @@
-{{name}}, your account is requested to reset the password at 2:30 AM , 19 Nov 2019
+{{name}}, your account is requested to reset the password at {{date_time | time}} , {{date_time | date}}
 			
 		
 		

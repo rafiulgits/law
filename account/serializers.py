@@ -248,6 +248,12 @@ class PasswordChangeSerializer(Serializer):
 
 
 
+
+class AccountVerifySerializer(Serializer):
+	token = CharField(max_length=256)
+
+
+
 class PasswordResetRequestSerializer(Serializer):
 	email = EmailField()
 

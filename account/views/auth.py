@@ -1,9 +1,10 @@
 from account.serializers import (ProfileSerializer,LogSerializer,
-AccountSerializer, AccountUpdateSerializer, PasswordChangeSerializer,
-PasswordResetRequestSerializer, ResetRequestVerifySerializer,PasswordResetSerializer)
+	AccountSerializer, AccountUpdateSerializer, PasswordChangeSerializer,
+	PasswordResetRequestSerializer, ResetRequestVerifySerializer,
+	PasswordResetSerializer,AccountVerifySerializer)
 from account.models import Account, Reset
 
-from django.shortcuts import redirect
+from django.shortcuts import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.exceptions import NotFound,NotAcceptable,ValidationError, MethodNotAllowed
@@ -15,8 +16,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from generic.service import verify_email,decode
-
+from generic.service import generate_token, verify_token, send_template_mail
 
 def _get_user_token(user):
 	token = RefreshToken.for_user(user)
@@ -48,8 +48,8 @@ class SignUp(APIView):
 		if serializer.is_valid():
 			user = serializer.create(serializer.validated_data)
 			if not user.is_active:
-				verify_email(user)
-				return Response({"res":"waiting for verification"})
+				_sent_verification_message(user)
+				return HttpResponse({"res" : "OK"}, content_type='application/json')
 			else:
 				data = _get_user_token(user)
 				return Response(data)
@@ -57,17 +57,32 @@ class SignUp(APIView):
 			raise ValidationError(serializer.errors)
 
 
+
+def _sent_verification_message(account):
+	token = generate_token({'user_id' : account.id})
+	send_template_mail(to_mail=account.email, subject='Account Verification', 
+		body_path='account/verify.txt', template_path='account/verify.html',
+		context={'name' : account.name, 
+		'url': 'https://askriashad.com/account-verify/?token={}'.format(token)})
+	return
+
+
+
+
 class VerifyEmail(APIView):
-	renderer_classes = (JSONRenderer,)
-	def get(self, request, token):
-		data = decode(token)
-		if data:
-			account = Account.objects.get(id=data['user_id'])
-			if not account.is_active:
-				account.is_active = True
-				account.save()
-				return redirect('https://askriashad.com/login')
-		raise NotAcceptable("invalid request")
+
+	def post(self, request):
+		serializer = AccountVerifySerializer(data=request.POST)
+		if not serializer.is_valid():
+			raise ValidationError(serializer.errors)
+		data = verify_token(serializer.validated_data['token'])
+		if not data:
+			raise ValidationError({"token" : "invalid token"})
+		user = Account.objects.get(id=data['user_id'])
+		user.is_active = True
+		user.save()
+		tokens = _get_user_token(user)
+		return Response(tokens)
 
 
 class AccountUpdate(APIView):
@@ -96,8 +111,6 @@ class PasswordChange(APIView):
 
 
 
-
-from generic.service import generate_token, verify_token, send_template_mail
 
 
 class PasswordResetRequest(APIView):
