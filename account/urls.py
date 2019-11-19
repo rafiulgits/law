@@ -5,11 +5,15 @@ from django.contrib.auth import views as resetviews
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-	path('signup/', auth.SignUp.as_view(), name='signup'),
-	path('signin/', auth.SignIn.as_view(), name='signin'),
-	path('access-renew/', TokenRefreshView.as_view(), name='access-renew'),
-	path('profile/', manage.Profile.as_view(), name='user-profile'),
+	path('signup/', auth.SignUp.as_view()),
+	path('signin/', auth.SignIn.as_view()),
+	path('access-renew/', TokenRefreshView.as_view()),
+	path('profile/', manage.Profile.as_view()),
 	path('update/', auth.AccountUpdate.as_view()),
 	path('password-change/', auth.PasswordChange.as_view()),
 	path('verify/<token>/', auth.VerifyEmail.as_view()),
+
+	path('password-reset/request/', auth.PasswordResetRequest.as_view()),
+	path('password-reset/verify/', auth.VerifyPasswordRequest.as_view()),
+	path('password-reset/', auth.PasswordResetView.as_view()),
 ]

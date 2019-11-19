@@ -6,6 +6,7 @@ from django.contrib.auth import get_backends
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
+from uuid import uuid4
 
 
 _GENDER = (
@@ -108,3 +109,11 @@ class Profile(models.Model):
 	institute = models.CharField(max_length=250)
 	bar = models.CharField(max_length=250)
 	session = models.PositiveIntegerField(default=0)
+
+
+
+
+class Reset(models.Model):
+	uid = models.UUIDField(primary_key=True, default=uuid4)
+	account = models.OneToOneField(Account, on_delete=models.CASCADE)
+	date_time = models.DateTimeField(auto_now=True)

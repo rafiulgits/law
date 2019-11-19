@@ -5,13 +5,17 @@ from draft.graph.engine import Query
 from draft.models import Article, Directory
 from draft.serializers import DirectorySerializer, ArticleSerailizer
 
-from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError, NotAuthenticated
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 
 
 def root_directories(request):
+	if not request.user.is_authenticated:
+		raise NotAuthenticated("authentication required")
+	if not request.user.is_staff:
+		raise PermissionDenied("access denied")
 	result = Query.root_directories()
 	return HttpResponse(result, content_type='application/json')
 

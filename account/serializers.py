@@ -245,3 +245,37 @@ class PasswordChangeSerializer(Serializer):
 		self.account.set_password(validated_data.get('confirm_password'))
 		self.account.save()
 		return self.account
+
+
+
+class PasswordResetRequestSerializer(Serializer):
+	email = EmailField()
+
+
+class ResetRequestVerifySerializer(Serializer):
+	token = CharField(max_length=256)
+
+
+
+class PasswordResetSerializer(Serializer):
+	new_password = CharField(min_length=6, max_length=60)
+	confirm_password = CharField(min_length=6, max_length=60)
+
+
+	def __init__(self, *args, **kwargs):
+		user = kwargs.pop('user')
+		super(PasswordResetSerializer, self).__init__(*args, **kwargs)
+		self.user = user
+
+
+	def validate(self, data):
+		if len(data['new_password']) != len(data['confirm_password']):
+			raise ValidationError({"password": "new and confirm didn't matched"})
+		if data['new_password'] != data['confirm_password']:
+			raise ValidationError({"password": "new and confirm didn't matched"})
+		return data
+
+	def update(self, validated_data):
+		self.user.set_password(validated_data['new_password'])
+		self.user.save()
+		return self.user

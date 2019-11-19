@@ -1,5 +1,6 @@
 from draft.models import Pointer, Directory, Article
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import (ModelSerializer, Serializer, EmailField, 
+    CharField)
 
 
 class DirectorySerializer(ModelSerializer):
@@ -74,3 +75,11 @@ class ArticleSerailizer(ModelSerializer):
         self.article.directory = validated_data.get('directory')
         self.article.save()
         return self.article
+
+
+
+
+
+
+class PasswordResetRequestSerializer(Serializer):
+    email = EmailField()
