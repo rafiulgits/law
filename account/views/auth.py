@@ -49,7 +49,7 @@ class SignUp(APIView):
 			user = serializer.create(serializer.validated_data)
 			if not user.is_active:
 				_sent_verification_message(user)
-				return HttpResponse({"res" : "OK"}, content_type='application/json')
+				return Response({"res" : "OK"})
 			else:
 				data = _get_user_token(user)
 				return Response(data)
